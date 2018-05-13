@@ -1,0 +1,80 @@
+buildscript {
+    ext {
+        repoConfig = {
+            mavenCentral()
+
+            maven {
+                url "https://plugins.gradle.org/m2/"
+            }
+        }
+
+        jooqVersion = "3.10.0"
+        junitVersion = "5.2.0"
+    }
+
+    repositories repoConfig
+
+    dependencies {
+        classpath "io.franzbecker:gradle-lombok:1.14"
+        classpath "org.unbroken-dome.gradle-plugins:gradle-xjc-plugin:1.1.3"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "maven-publish"
+apply plugin: "io.franzbecker.gradle-lombok"
+apply plugin: "org.unbroken-dome.xjc"
+
+repositories repoConfig
+
+group "pl.ppiorkowski"
+version "0.0.1-SNAPSHOT"
+sourceCompatibility = 1.8
+
+dependencies {
+    compile "org.jooq:jooq-codegen:$jooqVersion"
+
+    xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1"
+    xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-basics-annotate:1.0.2"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+wrapper {
+    gradleVersion = "4.7"
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+xjcGenerate {
+    source = fileTree('src/main/resources/schema/2_3') { include 'schema.xsd' }
+    bindingFiles = fileTree('src/main/resources/schema/2_3/bindings') { include 'binding.xjb' }
+    outputDirectory = file("gen/java")
+    targetPackage = "pl.ppiorkowski.verjo.xsd"
+    extraArgs = ['-Xannotate']
+}
+
+clean {
+    delete "gen"
+}
