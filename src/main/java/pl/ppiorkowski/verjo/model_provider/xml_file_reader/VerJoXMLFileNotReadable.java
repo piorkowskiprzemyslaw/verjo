@@ -1,11 +1,11 @@
-package pl.ppiorkowski.verjo.properties_mapper.vertabelo_xml_reader;
+package pl.ppiorkowski.verjo.model_provider.xml_file_reader;
 
 import java.nio.file.Path;
 
-class VertabeloXMLFileNotReadable extends RuntimeException {
+class VerJoXMLFileNotReadable extends RuntimeException {
     private static final String MSG_TEMPLATE = "Missing read permission for file: %s";
 
-    VertabeloXMLFileNotReadable(Path path) {
+    VerJoXMLFileNotReadable(Path path) {
         super(String.format(MSG_TEMPLATE, path.toAbsolutePath().toString()));
     }
 }

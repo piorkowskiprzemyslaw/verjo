@@ -2,7 +2,7 @@ package pl.ppiorkowski.verjo;
 
 import org.jooq.DSLContext;
 import org.jooq.util.*;
-import pl.ppiorkowski.verjo.properties_mapper.DatabaseModelProvider;
+import pl.ppiorkowski.verjo.model_provider.DatabaseModelProvider;
 import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
 
 import java.sql.SQLException;
@@ -14,10 +14,13 @@ public class VertabeloXMLDb extends AbstractDatabase {
 
     private DatabaseModelProvider databaseModelProvider;
 
+    private String getXmlFileProperty() {
+        return getProperties().getProperty(XML_FILE_PROPERTY);
+    }
 
     private DatabaseModelProvider getProvider() {
         if (databaseModelProvider == null) {
-            databaseModelProvider = new DatabaseModelProvider(null);
+            databaseModelProvider = new DatabaseModelProvider(getXmlFileProperty());
         }
         return databaseModelProvider;
     }

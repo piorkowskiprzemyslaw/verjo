@@ -38,9 +38,10 @@ dependencies {
     xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1"
     xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-basics-annotate:1.0.2"
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testCompile 'com.google.jimfs:jimfs:1.1'
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
 test {

@@ -1,11 +1,8 @@
-package pl.ppiorkowski.verjo.properties_mapper.vertabelo_xml_reader;
+package pl.ppiorkowski.verjo.model_provider.xml_file_reader;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,10 +21,10 @@ import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class VertabeloXMLReaderTest {
+class VerJoXMLReaderTest {
 
     private FileSystem fs;
-    private VertabeloXMLReader xmlReader;
+    private VerJoXMLReader xmlReader;
 
     @BeforeEach
     void prepareFS() {
@@ -35,7 +32,25 @@ class VertabeloXMLReaderTest {
                 .setAttributeViews("basic", "posix")
                 .build();
         fs = Jimfs.newFileSystem(configuration);
-        xmlReader = new VertabeloXMLReader(fs);
+        xmlReader = new VerJoXMLReader(fs);
+    }
+
+    @Test
+    @DisplayName("should throw when file path is empty")
+    void shouldThrowExceptionOnInvalidFilePath1() {
+        // when & then
+        assertThrows(VerJoXMLFilePathNullOrEmpty.class,
+                () -> xmlReader.readFromFile(""),
+                "File path is null or empty!");
+    }
+
+    @Test
+    @DisplayName("should throw when file path is null")
+    void shouldThrowExceptionOnInvalidFilePath2() {
+        // when & then
+        assertThrows(VerJoXMLFilePathNullOrEmpty.class,
+                () -> xmlReader.readFromFile(null),
+                "File path is null or empty!");
     }
 
     @Test
@@ -56,7 +71,7 @@ class VertabeloXMLReaderTest {
     @Test
     void shouldThrowExceptionWhenFileDoesNotExist() {
         // when & then
-        assertThrows(VertabeloXMLFileNotExists.class,
+        assertThrows(VerJoXMLFileNotExists.class,
                 () -> xmlReader.readFromFile("notExists.xml"),
                 "File not found: notExists.xml");
     }
@@ -71,7 +86,7 @@ class VertabeloXMLReaderTest {
         Files.write(path, "restricted content".getBytes());
 
         // when & then
-        assertThrows(VertabeloXMLFileNotReadable.class,
+        assertThrows(VerJoXMLFileNotReadable.class,
                 () -> xmlReader.readFromFile("noReadPerm.xml"),
                 "Missing read permission for file: noReadPerm.xml");
     }

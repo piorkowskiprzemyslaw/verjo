@@ -1,10 +1,10 @@
-package pl.ppiorkowski.verjo.properties_mapper;
+package pl.ppiorkowski.verjo.model_provider;
 
 import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pl.ppiorkowski.verjo.properties_mapper.vertabelo_xml_reader.VertabeloXMLReader;
+import pl.ppiorkowski.verjo.model_provider.xml_file_reader.VerJoXMLReader;
 import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 
 import javax.xml.bind.DataBindingException;
@@ -27,7 +27,7 @@ class DatabaseModelProviderTest {
     @BeforeEach
     void setup() {
         fs = Jimfs.newFileSystem(unix());
-        provider = new DatabaseModelProvider("sample.xml", new VertabeloXMLReader(fs));
+        provider = new DatabaseModelProvider("sample.xml", new VerJoXMLReader(fs));
     }
 
     @AfterEach

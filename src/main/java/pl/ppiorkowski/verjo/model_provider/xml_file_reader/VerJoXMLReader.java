@@ -1,4 +1,4 @@
-package pl.ppiorkowski.verjo.properties_mapper.vertabelo_xml_reader;
+package pl.ppiorkowski.verjo.model_provider.xml_file_reader;
 
 import lombok.RequiredArgsConstructor;
 
@@ -9,15 +9,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @RequiredArgsConstructor
-public class VertabeloXMLReader {
+public class VerJoXMLReader {
 
     private final FileSystem fileSystem;
 
-    public VertabeloXMLReader() {
+    public VerJoXMLReader() {
         fileSystem = FileSystems.getDefault();
     }
 
     public InputStream readFromFile(String pathToFile) {
+        validatePathToFile(pathToFile);
         Path path = fileSystem.getPath(pathToFile);
         checkFileExists(path);
         checkFileReadable(path);
@@ -29,15 +30,21 @@ public class VertabeloXMLReader {
         }
     }
 
+    private void validatePathToFile(String pathToFile) {
+        if (pathToFile == null || pathToFile.isEmpty()) {
+            throw new VerJoXMLFilePathNullOrEmpty();
+        }
+    }
+
     private static void checkFileReadable(Path path) {
         if (!Files.isReadable(path)) {
-            throw new VertabeloXMLFileNotReadable(path);
+            throw new VerJoXMLFileNotReadable(path);
         }
     }
 
     private static void checkFileExists(Path path) {
         if (!Files.exists(path)) {
-            throw new VertabeloXMLFileNotExists(path);
+            throw new VerJoXMLFileNotExists(path);
         }
     }
 }
