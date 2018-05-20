@@ -2,20 +2,36 @@ package pl.ppiorkowski.verjo;
 
 import org.jooq.DSLContext;
 import org.jooq.util.*;
+import pl.ppiorkowski.verjo.properties_mapper.DatabaseModelProvider;
+import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class VertabeloXMLDb extends AbstractDatabase {
 
+    private static final String XML_FILE_PROPERTY = "vertabeloXML";
+
+    private DatabaseModelProvider databaseModelProvider;
+
+
+    private DatabaseModelProvider getProvider() {
+        if (databaseModelProvider == null) {
+            databaseModelProvider = new DatabaseModelProvider(null);
+        }
+        return databaseModelProvider;
+    }
+
+
     @Override
     protected DSLContext create0() {
+        DatabaseEngine dbEngine = getProvider().getModel().getDatabaseEngine();
+
         return null;
     }
 
     @Override
     protected void loadPrimaryKeys(DefaultRelations r) throws SQLException {
-        
 
     }
 
