@@ -1,15 +1,74 @@
 package pl.ppiorkowski.verjo.properties_mapper;
 
-import org.junit.jupiter.api.DisplayName;
+import com.google.common.jimfs.Jimfs;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import pl.ppiorkowski.verjo.properties_mapper.vertabelo_xml_reader.VertabeloXMLReader;
+import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 
-import static org.junit.jupiter.api.Assertions.*;
+import javax.xml.bind.DataBindingException;
+import javax.xml.bind.JAXB;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-@DisplayName("Database model provider")
+import static com.google.common.jimfs.Configuration.unix;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class DatabaseModelProviderTest {
 
-    @DisplayName("should throw exception when file cannot be found")
-    void shouldThrowWhenFileNotExists() {
+    private FileSystem fs;
+    private DatabaseModelProvider provider;
 
+    @BeforeEach
+    void setup() {
+        fs = Jimfs.newFileSystem(unix());
+        provider = new DatabaseModelProvider("sample.xml", new VertabeloXMLReader(fs));
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        fs.close();
+    }
+
+    @Test
+    void shouldReadInputStreamContent() throws IOException {
+        // given
+        DatabaseModel dbModel = new DatabaseModel();
+        dbModel.setName("database model name");
+        createFileWithContent(serializeModel(dbModel));
+
+        // when
+        DatabaseModel model = provider.getModel();
+
+        // then
+        assertEquals(model.getName(), "database model name");
+    }
+
+    @Test
+    void shouldThrowWhenFileContentCannotBeParsed() throws IOException {
+        // given
+        createFileWithContent("dummy file content");
+
+        // when & then
+        assertThrows(DataBindingException.class,
+                () -> provider.getModel());
+    }
+
+    private void createFileWithContent(String fileContent) throws IOException {
+        Path path = fs.getPath("sample.xml");
+        Files.createFile(path);
+        Files.write(path, fileContent.getBytes());
+    }
+
+    private String serializeModel(DatabaseModel dbModel) {
+        StringWriter stringWriter = new StringWriter();
+        JAXB.marshal(dbModel, stringWriter);
+        return stringWriter.toString();
     }
 
 }
