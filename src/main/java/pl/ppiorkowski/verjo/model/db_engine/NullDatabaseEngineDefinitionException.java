@@ -1,4 +1,4 @@
-package pl.ppiorkowski.verjo.db_engine;
+package pl.ppiorkowski.verjo.model.db_engine;
 
 public class NullDatabaseEngineDefinitionException extends RuntimeException {
     public NullDatabaseEngineDefinitionException() {

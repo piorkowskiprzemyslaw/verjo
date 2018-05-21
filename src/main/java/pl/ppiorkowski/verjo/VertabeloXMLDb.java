@@ -1,111 +1,106 @@
 package pl.ppiorkowski.verjo;
 
 import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.util.*;
-import pl.ppiorkowski.verjo.model_provider.DatabaseModelProvider;
-import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
-import pl.ppiorkowski.verjo.xsd.DatabaseModel;
+import pl.ppiorkowski.verjo.model.VertabeloDbModel;
+import pl.ppiorkowski.verjo.model.VertabeloDbModelFactory;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import static pl.ppiorkowski.verjo.db_engine.DatabaseEngineConverter.asSQLDialect;
+import static java.util.Collections.emptyList;
 
 public class VertabeloXMLDb extends AbstractDatabase {
 
-    private static final String XML_FILE_PROPERTY = "vertabeloXML";
+    private static final String XML_FILE_PROPERTY = "vertabeloXMLFile";
 
-    private DatabaseModelProvider databaseModelProvider;
+    private VertabeloDbModel dbModel;
 
     private String getXmlFileProperty() {
         return getProperties().getProperty(XML_FILE_PROPERTY);
     }
 
-    private DatabaseModelProvider getProvider() {
-        if (databaseModelProvider == null) {
-            databaseModelProvider = new DatabaseModelProvider(getXmlFileProperty());
+    private VertabeloDbModel getModel() {
+        if (null == dbModel) {
+            dbModel = VertabeloDbModelFactory.build(getXmlFileProperty());
         }
-        return databaseModelProvider;
-    }
-
-    private DatabaseModel getModel() {
-        return getProvider().getModel();
+        return dbModel;
     }
 
     @Override
     protected DSLContext create0() {
-        DatabaseEngine dbEngine = getModel().getDatabaseEngine();
-        return DSL.using(asSQLDialect(dbEngine));
+        SQLDialect dialect = getModel().getDialect();
+        return DSL.using(dialect);
     }
 
     @Override
-    protected void loadPrimaryKeys(DefaultRelations r) throws SQLException {
-
-    }
-
-    @Override
-    protected void loadUniqueKeys(DefaultRelations r) throws SQLException {
+    protected void loadPrimaryKeys(DefaultRelations r) {
 
     }
 
     @Override
-    protected void loadForeignKeys(DefaultRelations r) throws SQLException {
+    protected void loadUniqueKeys(DefaultRelations r) {
 
     }
 
     @Override
-    protected void loadCheckConstraints(DefaultRelations r) throws SQLException {
+    protected void loadForeignKeys(DefaultRelations r) {
 
     }
 
     @Override
-    protected List<CatalogDefinition> getCatalogs0() throws SQLException {
+    protected void loadCheckConstraints(DefaultRelations r) {
+
+    }
+
+    @Override
+    protected List<SchemaDefinition> getSchemata0() {
         return null;
     }
 
     @Override
-    protected List<SchemaDefinition> getSchemata0() throws SQLException {
+    protected List<SequenceDefinition> getSequences0() {
         return null;
     }
 
     @Override
-    protected List<SequenceDefinition> getSequences0() throws SQLException {
+    protected List<TableDefinition> getTables0() {
         return null;
     }
 
     @Override
-    protected List<TableDefinition> getTables0() throws SQLException {
-        return null;
+    protected List<CatalogDefinition> getCatalogs0() {
+        return emptyList();
     }
 
     @Override
-    protected List<RoutineDefinition> getRoutines0() throws SQLException {
-        return null;
+    protected List<RoutineDefinition> getRoutines0() {
+        return emptyList();
     }
 
     @Override
-    protected List<PackageDefinition> getPackages0() throws SQLException {
-        return null;
+    protected List<PackageDefinition> getPackages0() {
+        return emptyList();
     }
 
     @Override
-    protected List<EnumDefinition> getEnums0() throws SQLException {
-        return null;
+    protected List<EnumDefinition> getEnums0() {
+        return emptyList();
     }
 
     @Override
-    protected List<DomainDefinition> getDomains0() throws SQLException {
-        return null;
+    protected List<DomainDefinition> getDomains0() {
+        return emptyList();
     }
 
     @Override
-    protected List<UDTDefinition> getUDTs0() throws SQLException {
-        return null;
+    protected List<UDTDefinition> getUDTs0() {
+        return emptyList();
     }
 
     @Override
-    protected List<ArrayDefinition> getArrays0() throws SQLException {
-        return null;
+    protected List<ArrayDefinition> getArrays0() {
+        return emptyList();
     }
 }

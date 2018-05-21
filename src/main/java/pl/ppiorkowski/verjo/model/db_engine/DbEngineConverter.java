@@ -1,4 +1,4 @@
-package pl.ppiorkowski.verjo.db_engine;
+package pl.ppiorkowski.verjo.model.db_engine;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,8 @@ import java.util.Map;
 import static org.jooq.SQLDialect.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DatabaseEngineConverter {
-    private static final JooqLogger log = JooqLogger.getLogger(DatabaseEngineConverter.class);
+public final class DbEngineConverter {
+    private static final JooqLogger log = JooqLogger.getLogger(DbEngineConverter.class);
 
     private static final Map<DatabaseEngine, SQLDialect> supportedEngines = new HashMap<>();
 

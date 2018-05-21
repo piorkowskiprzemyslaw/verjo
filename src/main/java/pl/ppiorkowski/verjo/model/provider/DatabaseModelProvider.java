@@ -1,6 +1,5 @@
-package pl.ppiorkowski.verjo.model_provider;
+package pl.ppiorkowski.verjo.model.provider;
 
-import pl.ppiorkowski.verjo.model_provider.xml_file_reader.VerJoXMLReader;
 import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 
 import javax.xml.bind.JAXB;

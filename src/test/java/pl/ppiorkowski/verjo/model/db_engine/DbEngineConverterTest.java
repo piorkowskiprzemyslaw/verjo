@@ -1,4 +1,4 @@
-package pl.ppiorkowski.verjo.db_engine;
+package pl.ppiorkowski.verjo.model.db_engine;
 
 import org.jooq.SQLDialect;
 import org.junit.jupiter.api.DisplayName;
@@ -13,17 +13,16 @@ import java.util.stream.Stream;
 import static org.jooq.SQLDialect.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static pl.ppiorkowski.verjo.db_engine.DatabaseEngineConverter.asSQLDialect;
 
 @DisplayName("Database engine converter should")
-class DatabaseEngineConverterTest {
+class DbEngineConverterTest {
 
     @Test
     @DisplayName("throw exception when passed database engine is null")
     void shouldThrowExceptionOnNullEngine() {
         // when & then
         assertThrows(NullDatabaseEngineDefinitionException.class,
-                () -> asSQLDialect(null),
+                () -> DbEngineConverter.asSQLDialect(null),
                 "Provided database engine object is null!");
     }
 
@@ -35,7 +34,7 @@ class DatabaseEngineConverterTest {
         DatabaseEngine engine = engineFrom(dbName, dbVersion);
 
         // when
-        SQLDialect sqlDialect = asSQLDialect(engine);
+        SQLDialect sqlDialect = DbEngineConverter.asSQLDialect(engine);
 
         // then
         assertEquals(sqlDialect, expectedDialect);
@@ -60,7 +59,7 @@ class DatabaseEngineConverterTest {
         DatabaseEngine engine = engineFrom("unknown_engine", "unknown_version");
 
         // when
-        SQLDialect sqlDialect = asSQLDialect(engine);
+        SQLDialect sqlDialect = DbEngineConverter.asSQLDialect(engine);
 
         // then
         assertEquals(sqlDialect, DEFAULT);

@@ -1,4 +1,4 @@
-package pl.ppiorkowski.verjo.model_provider.xml_file_reader;
+package pl.ppiorkowski.verjo.model.provider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -9,15 +9,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @RequiredArgsConstructor
-public class VerJoXMLReader {
+class VerJoXMLReader {
 
     private final FileSystem fileSystem;
 
-    public VerJoXMLReader() {
+    VerJoXMLReader() {
         fileSystem = FileSystems.getDefault();
     }
 
-    public InputStream readFromFile(String pathToFile) {
+    InputStream readFromFile(String pathToFile) {
         validatePathToFile(pathToFile);
         Path path = fileSystem.getPath(pathToFile);
         checkFileExists(path);

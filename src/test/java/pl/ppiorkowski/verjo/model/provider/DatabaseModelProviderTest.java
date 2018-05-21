@@ -1,11 +1,10 @@
-package pl.ppiorkowski.verjo.model_provider;
+package pl.ppiorkowski.verjo.model.provider;
 
 import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import pl.ppiorkowski.verjo.model_provider.xml_file_reader.VerJoXMLReader;
 import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 
 import javax.xml.bind.DataBindingException;

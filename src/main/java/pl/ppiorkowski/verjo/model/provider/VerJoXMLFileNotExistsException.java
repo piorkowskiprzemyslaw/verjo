@@ -1,4 +1,4 @@
-package pl.ppiorkowski.verjo.model_provider.xml_file_reader;
+package pl.ppiorkowski.verjo.model.provider;
 
 import java.nio.file.Path;
 
