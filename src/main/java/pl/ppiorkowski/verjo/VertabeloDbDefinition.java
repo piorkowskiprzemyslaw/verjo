@@ -4,26 +4,29 @@ import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.util.*;
-import pl.ppiorkowski.verjo.model.VertabeloDbModel;
-import pl.ppiorkowski.verjo.model.VertabeloDbModelFactory;
+import pl.ppiorkowski.verjo.model.DbModel;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static pl.ppiorkowski.verjo.model.DbModelFactory.build;
 
-public class VertabeloXMLDb extends AbstractDatabase {
+public class VertabeloDbDefinition extends AbstractDatabase {
 
     private static final String XML_FILE_PROPERTY = "vertabeloXMLFile";
 
-    private VertabeloDbModel dbModel;
+    private DbModel dbModel;
 
     private String getXmlFileProperty() {
         return getProperties().getProperty(XML_FILE_PROPERTY);
     }
 
-    private VertabeloDbModel getModel() {
+    private DbModel getModel() {
         if (null == dbModel) {
-            dbModel = VertabeloDbModelFactory.build(getXmlFileProperty());
+            dbModel = build(getXmlFileProperty());
         }
         return dbModel;
     }
@@ -56,7 +59,10 @@ public class VertabeloXMLDb extends AbstractDatabase {
 
     @Override
     protected List<SchemaDefinition> getSchemata0() {
-        return null;
+        Set<String> schemaNames = getModel().getSchemaNames();
+        return schemaNames.stream()
+                .map(name -> new SchemaDefinition(this, name, null))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -66,7 +72,22 @@ public class VertabeloXMLDb extends AbstractDatabase {
 
     @Override
     protected List<TableDefinition> getTables0() {
-        return null;
+        List<TableDefinition> result = new ArrayList<>();
+        List<String> inputSchemata = getInputSchemata();
+
+        getModel().selectTables(inputSchemata).forEach(table -> {
+            String schemaName = table.schema().orElse("");
+            SchemaDefinition schema = getSchema(schemaName);
+            result.add(new VertabeloTableDefinition(schema, table));
+        });
+
+        getModel().selectViews(inputSchemata).forEach(view -> {
+            String schemaName = view.schema().orElse("");
+            SchemaDefinition schema = getSchema(schemaName);
+            result.add(new VertabeloViewDefinition(schema, view));
+        });
+
+        return result;
     }
 
     @Override

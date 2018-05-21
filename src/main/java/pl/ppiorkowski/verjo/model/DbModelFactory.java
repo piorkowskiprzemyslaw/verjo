@@ -7,11 +7,11 @@ import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 import static lombok.AccessLevel.PRIVATE;
 
 @AllArgsConstructor(access = PRIVATE)
-public class VertabeloDbModelFactory {
+public class DbModelFactory {
 
-    public static VertabeloDbModel build(String xmlFilePath) {
+    public static DbModel build(String xmlFilePath) {
         DatabaseModel model = new DatabaseModelProvider(xmlFilePath).getModel();
-        return new VertabeloDbModel(model);
+        return new DbModel(model);
     }
 
 }
