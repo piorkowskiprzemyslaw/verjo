@@ -21,6 +21,7 @@ import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@DisplayName("VerJoXML reader should")
 class VerJoXMLReaderTest {
 
     private FileSystem fs;
@@ -36,24 +37,25 @@ class VerJoXMLReaderTest {
     }
 
     @Test
-    @DisplayName("should throw when file path is empty")
+    @DisplayName("throw exception when file path is empty")
     void shouldThrowExceptionOnInvalidFilePath1() {
         // when & then
-        assertThrows(VerJoXMLFilePathNullOrEmpty.class,
+        assertThrows(VerJoXMLFilePathNullOrEmptyException.class,
                 () -> xmlReader.readFromFile(""),
                 "File path is null or empty!");
     }
 
     @Test
-    @DisplayName("should throw when file path is null")
+    @DisplayName("throw exception when file path is null")
     void shouldThrowExceptionOnInvalidFilePath2() {
         // when & then
-        assertThrows(VerJoXMLFilePathNullOrEmpty.class,
+        assertThrows(VerJoXMLFilePathNullOrEmptyException.class,
                 () -> xmlReader.readFromFile(null),
                 "File path is null or empty!");
     }
 
     @Test
+    @DisplayName("read existing file content")
     void shouldReadExistingFile() throws IOException {
         // given
         Path path = fs.getPath("bar.xml");
@@ -69,14 +71,16 @@ class VerJoXMLReaderTest {
     }
 
     @Test
+    @DisplayName("throw exception when file does not exists")
     void shouldThrowExceptionWhenFileDoesNotExist() {
         // when & then
-        assertThrows(VerJoXMLFileNotExists.class,
+        assertThrows(VerJoXMLFileNotExistsException.class,
                 () -> xmlReader.readFromFile("notExists.xml"),
                 "File not found: notExists.xml");
     }
 
     @Test
+    @DisplayName("throw exception when existing file lacks read permission")
     @Disabled("right now jimfs does not support testing file access scenarios")
     void shouldThrowExceptionForMissingReadPermission() throws IOException {
         // given
@@ -86,7 +90,7 @@ class VerJoXMLReaderTest {
         Files.write(path, "restricted content".getBytes());
 
         // when & then
-        assertThrows(VerJoXMLFileNotReadable.class,
+        assertThrows(VerJoXMLFileNotReadableException.class,
                 () -> xmlReader.readFromFile("noReadPerm.xml"),
                 "Missing read permission for file: noReadPerm.xml");
     }

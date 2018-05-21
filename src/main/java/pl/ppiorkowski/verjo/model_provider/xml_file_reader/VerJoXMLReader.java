@@ -32,19 +32,19 @@ public class VerJoXMLReader {
 
     private void validatePathToFile(String pathToFile) {
         if (pathToFile == null || pathToFile.isEmpty()) {
-            throw new VerJoXMLFilePathNullOrEmpty();
+            throw new VerJoXMLFilePathNullOrEmptyException();
         }
     }
 
     private static void checkFileReadable(Path path) {
         if (!Files.isReadable(path)) {
-            throw new VerJoXMLFileNotReadable(path);
+            throw new VerJoXMLFileNotReadableException(path);
         }
     }
 
     private static void checkFileExists(Path path) {
         if (!Files.exists(path)) {
-            throw new VerJoXMLFileNotExists(path);
+            throw new VerJoXMLFileNotExistsException(path);
         }
     }
 }

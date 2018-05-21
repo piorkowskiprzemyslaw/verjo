@@ -1,12 +1,16 @@
 package pl.ppiorkowski.verjo;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.util.*;
 import pl.ppiorkowski.verjo.model_provider.DatabaseModelProvider;
 import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
+import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import static pl.ppiorkowski.verjo.db_engine.DatabaseEngineConverter.asSQLDialect;
 
 public class VertabeloXMLDb extends AbstractDatabase {
 
@@ -25,12 +29,14 @@ public class VertabeloXMLDb extends AbstractDatabase {
         return databaseModelProvider;
     }
 
+    private DatabaseModel getModel() {
+        return getProvider().getModel();
+    }
 
     @Override
     protected DSLContext create0() {
-        DatabaseEngine dbEngine = getProvider().getModel().getDatabaseEngine();
-
-        return null;
+        DatabaseEngine dbEngine = getModel().getDatabaseEngine();
+        return DSL.using(asSQLDialect(dbEngine));
     }
 
     @Override

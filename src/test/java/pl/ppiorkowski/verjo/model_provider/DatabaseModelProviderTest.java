@@ -3,6 +3,7 @@ package pl.ppiorkowski.verjo.model_provider;
 import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pl.ppiorkowski.verjo.model_provider.xml_file_reader.VerJoXMLReader;
 import pl.ppiorkowski.verjo.xsd.DatabaseModel;
@@ -19,6 +20,7 @@ import static com.google.common.jimfs.Configuration.unix;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@DisplayName("DatbaseModelProvider should")
 class DatabaseModelProviderTest {
 
     private FileSystem fs;
@@ -36,6 +38,7 @@ class DatabaseModelProviderTest {
     }
 
     @Test
+    @DisplayName("read input stream with correct content")
     void shouldReadInputStreamContent() throws IOException {
         // given
         DatabaseModel dbModel = new DatabaseModel();
@@ -50,6 +53,7 @@ class DatabaseModelProviderTest {
     }
 
     @Test
+    @DisplayName("throw exception when input stream contains invalid data")
     void shouldThrowWhenFileContentCannotBeParsed() throws IOException {
         // given
         createFileWithContent("dummy file content");

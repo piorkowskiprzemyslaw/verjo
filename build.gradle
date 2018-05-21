@@ -32,15 +32,18 @@ sourceCompatibility = 1.8
 
 dependencies {
     compile "org.jooq:jooq-codegen:$jooqVersion"
+    compile "org.jvnet.jaxb2_commons:jaxb2-basics-runtime:1.11.1"
 
     compileOnly 'org.projectlombok:lombok:1.16.20'
 
-    xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1"
-    xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-basics-annotate:1.0.2"
+    xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-basics:1.11.1"
+    xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-basics-annotate:1.0.4"
+    xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-fluent-api:3.0"
+    xjcClasspath "org.jvnet.jaxb2_commons:jaxb2-commons-lang:2.4"
 
+    testCompile "com.google.jimfs:jimfs:1.1"
     testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-    testCompile 'com.google.jimfs:jimfs:1.1'
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
@@ -75,7 +78,11 @@ xjcGenerate {
     bindingFiles = fileTree('src/main/resources/schema/2_3/bindings') { include 'binding.xjb' }
     outputDirectory = file("gen/java")
     targetPackage = "pl.ppiorkowski.verjo.xsd"
-    extraArgs = ['-Xannotate']
+    extraArgs = ['-Xannotate',
+                 '-Xfluent-api',
+                 '-XtoString',
+                 '-Xequals',
+                 '-XhashCode']
 }
 
 clean {
