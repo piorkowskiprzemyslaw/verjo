@@ -76,13 +76,13 @@ public class VertabeloDbDefinition extends AbstractDatabase {
         List<String> inputSchemata = getInputSchemata();
 
         getModel().selectTables(inputSchemata).forEach(table -> {
-            String schemaName = table.schema().orElse("");
+            String schemaName = table.getSchemaString();
             SchemaDefinition schema = getSchema(schemaName);
             result.add(new VertabeloTableDefinition(schema, table));
         });
 
         getModel().selectViews(inputSchemata).forEach(view -> {
-            String schemaName = view.schema().orElse("");
+            String schemaName = view.getSchemaString();
             SchemaDefinition schema = getSchema(schemaName);
             result.add(new VertabeloViewDefinition(schema, view));
         });

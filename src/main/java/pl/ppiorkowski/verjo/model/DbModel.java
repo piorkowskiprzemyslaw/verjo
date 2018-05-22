@@ -36,13 +36,13 @@ public class DbModel {
 
     public Set<String> getSchemaNames() {
         HashSet<String> result = tables()
-                .map(TableModel::schema)
+                .map(TableModel::getSchema)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toCollection(HashSet::new));
 
         Set<String> viewSchemas = views()
-                .map(ViewModel::schema)
+                .map(ViewModel::getSchema)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
@@ -55,7 +55,7 @@ public class DbModel {
         HashSet<String> schemasSet = new HashSet<>(inputSchemas);
         return tables()
                 .filter(table -> {
-                    String tableSchema = table.schema().orElse("");
+                    String tableSchema = table.getSchemaString();
                     return schemasSet.contains(tableSchema);
                 });
     }
@@ -64,7 +64,7 @@ public class DbModel {
         HashSet<String> schemasSet = new HashSet<>(inputSchemas);
         return views()
                 .filter(view -> {
-                    String viewSchema = view.schema().orElse("");
+                    String viewSchema = view.getSchemaString();
                     return schemasSet.contains(viewSchema);
                 });
     }

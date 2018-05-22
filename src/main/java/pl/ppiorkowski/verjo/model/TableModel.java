@@ -17,11 +17,15 @@ public class TableModel extends ModelWithProperties {
         return new TableModel(table);
     }
 
-    public Optional<String> schema() {
+    public Optional<String> getSchema() {
         return getPropertyValue(SCHEMA_PROPERTY_NAME, table.getProperties());
     }
 
-    public String name() {
+    public String getSchemaString() {
+        return getSchema().orElse("");
+    }
+
+    public String getName() {
     return table.getName();
     }
 }

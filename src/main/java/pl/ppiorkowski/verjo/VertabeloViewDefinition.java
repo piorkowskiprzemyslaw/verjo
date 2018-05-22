@@ -7,6 +7,6 @@ import pl.ppiorkowski.verjo.model.ViewModel;
 public class VertabeloViewDefinition extends AbstractTableDefinition {
 
     public VertabeloViewDefinition(SchemaDefinition schema, ViewModel view) {
-        super(schema, view.name(), null);
+        super(schema, view.getName(), null);
     }
 }

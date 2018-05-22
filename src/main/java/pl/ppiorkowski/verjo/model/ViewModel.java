@@ -17,11 +17,15 @@ public class ViewModel extends ModelWithProperties {
         return new ViewModel(view);
     }
 
-    public Optional<String> schema() {
+    public Optional<String> getSchema() {
         return getPropertyValue(SCHEMA_PROPERTY_NAME, view.getProperties());
     }
 
-    public String name() {
+    public String getSchemaString() {
+        return getSchema().orElse("");
+    }
+
+    public String getName() {
         return view.getName();
     }
 }

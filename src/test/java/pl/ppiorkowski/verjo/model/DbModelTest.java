@@ -53,7 +53,7 @@ class DbModelTest {
         }
 
         @Test
-        @DisplayName("set which is empty when none of element defines custom schema")
+        @DisplayName("set which is empty when none of element defines custom getSchema")
         void shouldReturnEmptySet() {
             // given
             DbModel dbModel = new DbModel(databaseModel);
@@ -112,7 +112,7 @@ class DbModelTest {
             Stream<TableModel> stream = dbModel.selectTables(singletonList("schema1"));
 
             // then
-            List<Optional<String>> schemas = stream.map(TableModel::schema).collect(Collectors.toList());
+            List<Optional<String>> schemas = stream.map(TableModel::getSchema).collect(Collectors.toList());
             assertEquals(schemas, singletonList(Optional.of("schema1")));
         }
     }
@@ -163,7 +163,7 @@ class DbModelTest {
             Stream<ViewModel> stream = dbModel.selectViews(singletonList("schema1"));
 
             // then
-            List<Optional<String>> schemas = stream.map(ViewModel::schema).collect(Collectors.toList());
+            List<Optional<String>> schemas = stream.map(ViewModel::getSchema).collect(Collectors.toList());
             assertEquals(schemas, singletonList(Optional.of("schema1")));
         }
     }
