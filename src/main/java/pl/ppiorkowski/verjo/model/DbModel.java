@@ -29,6 +29,11 @@ public class DbModel {
                 .map(ViewModel::of);
     }
 
+    private Stream<SequenceModel> sequences() {
+        return databaseModel.getSequences().getSequence().stream()
+                .map(SequenceModel::of);
+    }
+
     public SQLDialect getDialect() {
         DatabaseEngine dbEngine = databaseModel.getDatabaseEngine();
         return DbEngineConverter.asSQLDialect(dbEngine);
@@ -66,6 +71,15 @@ public class DbModel {
                 .filter(view -> {
                     String viewSchema = view.getSchemaString();
                     return schemasSet.contains(viewSchema);
+                });
+    }
+
+    public Stream<SequenceModel> selectSequences(List<String> inputSchemas) {
+        HashSet<String> schemasSet = new HashSet<>(inputSchemas);
+        return sequences()
+                .filter(sequence -> {
+                    String sequenceSchema = sequence.getSchemaString();
+                    return schemasSet.contains(sequenceSchema);
                 });
     }
 

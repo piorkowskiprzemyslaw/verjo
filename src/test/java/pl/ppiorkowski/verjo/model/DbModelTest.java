@@ -21,13 +21,14 @@ import static pl.ppiorkowski.verjo.model.DbModel.SCHEMA_PROPERTY_NAME;
 @DisplayName("DbModel should")
 class DbModelTest {
 
-    private DatabaseModel databaseModel;
+    private DatabaseModel xmlDatabaseModel;
 
     @BeforeEach
     void setup() {
-        databaseModel = new DatabaseModel()
+        xmlDatabaseModel = new DatabaseModel()
                 .withTables(new Tables())
-                .withViews(new Views());
+                .withViews(new Views())
+                .withSequences(new Sequences());
     }
 
     @Nested
@@ -42,7 +43,7 @@ class DbModelTest {
             addViewWithSchema("schema1");
             addTableWithSchema("schema2");
             addViewWithSchema("schema3");
-            DbModel dbModel = new DbModel(databaseModel);
+            DbModel dbModel = new DbModel(xmlDatabaseModel);
 
             // when
             Set<String> schemaNames = dbModel.getSchemaNames();
@@ -56,7 +57,7 @@ class DbModelTest {
         @DisplayName("set which is empty when none of element defines custom getSchema")
         void shouldReturnEmptySet() {
             // given
-            DbModel dbModel = new DbModel(databaseModel);
+            DbModel dbModel = new DbModel(xmlDatabaseModel);
 
             // when
             Set<String> schemaNames = dbModel.getSchemaNames();
@@ -70,18 +71,18 @@ class DbModelTest {
     @DisplayName("reply with filtered tables stream")
     class FilterTables {
 
+        private DbModel dbModel;
+
         @BeforeEach
         void setup() {
             addTableWithSchema("schema1");
             addTableWithSchema("schema2");
+            dbModel = new DbModel(xmlDatabaseModel);
         }
 
         @Test
         @DisplayName("which is empty when input schema list is empty")
         void shouldReturnEmptyStream1() {
-            // given
-            DbModel dbModel = new DbModel(databaseModel);
-
             // when
             Stream<TableModel> stream = dbModel.selectTables(emptyList());
 
@@ -92,9 +93,6 @@ class DbModelTest {
         @Test
         @DisplayName("which is empty when no element fulfills filtering criteria")
         void shouldReturnEmptyStream2() {
-            // given
-            DbModel dbModel = new DbModel(databaseModel);
-
             // when
             Stream<TableModel> stream = dbModel.selectTables(singletonList("schema3"));
 
@@ -105,9 +103,6 @@ class DbModelTest {
         @Test
         @DisplayName("which contains tables from given schemas")
         void shouldReturnFilteredTable() {
-            // given
-            DbModel dbModel = new DbModel(databaseModel);
-
             // when
             Stream<TableModel> stream = dbModel.selectTables(singletonList("schema1"));
 
@@ -121,18 +116,18 @@ class DbModelTest {
     @DisplayName("reply with filtered views stream")
     class FilterViews {
 
+        private DbModel dbModel;
+
         @BeforeEach
         void setup() {
-            addViewWithSchema("schema1");
-            addViewWithSchema("schema2");
+            addViewWithSchema("viewSchema1");
+            addViewWithSchema("viewSchema2");
+            dbModel = new DbModel(xmlDatabaseModel);
         }
 
         @Test
         @DisplayName("which is empty when input schema list is empty")
         void shouldReturnEmptyStream1() {
-            // given
-            DbModel dbModel = new DbModel(databaseModel);
-
             // when
             Stream<ViewModel> stream = dbModel.selectViews(emptyList());
 
@@ -143,9 +138,6 @@ class DbModelTest {
         @Test
         @DisplayName("which is empty when no element fulfills filtering criteria")
         void shouldReturnEmptyStream2() {
-            // given
-            DbModel dbModel = new DbModel(databaseModel);
-
             // when
             Stream<ViewModel> stream = dbModel.selectViews(singletonList("schema3"));
 
@@ -156,26 +148,73 @@ class DbModelTest {
         @Test
         @DisplayName("which contains views from given schemas")
         void shouldReturnFilteredTable() {
-            // given
-            DbModel dbModel = new DbModel(databaseModel);
-
             // when
-            Stream<ViewModel> stream = dbModel.selectViews(singletonList("schema1"));
+            Stream<ViewModel> stream = dbModel.selectViews(singletonList("viewSchema1"));
 
             // then
             List<Optional<String>> schemas = stream.map(ViewModel::getSchema).collect(Collectors.toList());
-            assertEquals(schemas, singletonList(Optional.of("schema1")));
+            assertEquals(schemas, singletonList(Optional.of("viewSchema1")));
+        }
+    }
+
+    @Nested
+    @DisplayName("reply with filtered views stream")
+    class FilterSequences {
+
+        private DbModel dbModel;
+
+        @BeforeEach
+        void setup() {
+            addSequenceWithSchema("sequenceSchema1");
+            addSequenceWithSchema("sequenceSchema2");
+            dbModel = new DbModel(xmlDatabaseModel);
+        }
+
+        @Test
+        @DisplayName("which is empty when input schema list is empty")
+        void shouldReturnEmptyStream1() {
+            // when
+            Stream<SequenceModel> stream = dbModel.selectSequences(emptyList());
+
+            // then
+            assertEquals(stream.toArray().length, 0);
+        }
+
+        @Test
+        @DisplayName("which is empty when no element fulfills filtering criteria")
+        void shouldReturnEmptyStream2() {
+            // when
+            Stream<SequenceModel> stream = dbModel.selectSequences(singletonList("anotherSchema1"));
+
+            // then
+            assertEquals(stream.toArray().length, 0);
+        }
+
+        @Test
+        @DisplayName("which contains views from given schemas")
+        void shouldReturnFilteredStream() {
+            // when
+            Stream<SequenceModel> stream = dbModel.selectSequences(singletonList("sequenceSchema2"));
+
+            // then
+            List<Optional<String>> schemas = stream.map(SequenceModel::getSchema).collect(Collectors.toList());
+            assertEquals(schemas, singletonList(Optional.of("sequenceSchema2")));
         }
     }
 
     private void addTableWithSchema(String schemaName) {
-        databaseModel.getTables().getTable()
+        xmlDatabaseModel.getTables().getTable()
                 .add(new Table().withProperties(buildSchemaProperties(schemaName)));
     }
 
     private void addViewWithSchema(String schemaName) {
-        databaseModel.getViews().getView()
+        xmlDatabaseModel.getViews().getView()
                 .add(new View().withProperties(buildSchemaProperties(schemaName)));
+    }
+
+    private void addSequenceWithSchema(String schemaName) {
+        xmlDatabaseModel.getSequences().getSequence()
+                .add(new Sequence().withProperties(buildSchemaProperties(schemaName)));
     }
 
     private Properties buildSchemaProperties(String schemaName) {

@@ -67,7 +67,14 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected List<SequenceDefinition> getSequences0() {
-        return null;
+        return getModel().selectSequences(getInputSchemata())
+                .map(sequence -> {
+                    String schemaName = sequence.getSchemaString();
+                    SchemaDefinition schema = getSchema(schemaName);
+                    DefaultDataTypeDefinition typeDef = new DefaultDataTypeDefinition(this, schema, "BIGINT");
+                    return new DefaultSequenceDefinition(schema, sequence.getName(), typeDef);
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
