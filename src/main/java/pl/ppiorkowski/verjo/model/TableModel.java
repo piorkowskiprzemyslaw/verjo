@@ -2,8 +2,10 @@ package pl.ppiorkowski.verjo.model;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import pl.ppiorkowski.verjo.xsd.Column;
 import pl.ppiorkowski.verjo.xsd.Table;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -26,6 +28,10 @@ public class TableModel extends ModelWithProperties {
     }
 
     public String getName() {
-    return table.getName();
+        return table.getName();
+    }
+
+    public List<Column> getColumns() {
+        return table.getColumns().getColumn();
     }
 }
