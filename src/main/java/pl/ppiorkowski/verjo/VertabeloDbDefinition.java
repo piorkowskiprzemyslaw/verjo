@@ -4,6 +4,8 @@ import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.util.*;
+
+import pl.ppiorkowski.verjo.model.AlternateKeyModel;
 import pl.ppiorkowski.verjo.model.DbModel;
 import pl.ppiorkowski.verjo.model.PrimaryKeyModel;
 
@@ -51,7 +53,18 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadUniqueKeys(DefaultRelations r) {
+        dbModel.selectTables(getInputSchemata()).forEach(table -> {
+            SchemaDefinition schemaDef = getSchema(table.getSchemaString());
+            TableDefinition tableDef = getTable(schemaDef, table.getName());
+            table.getAlternateKeys().forEach(ak -> loadAlternateKey(r, tableDef, ak));
+        });
+    }
 
+    private void loadAlternateKey(DefaultRelations relations, TableDefinition tableDefinition,
+            AlternateKeyModel alternateKeyModel) {
+        alternateKeyModel.getColumns().forEach(column -> {
+            relations.addUniqueKey(alternateKeyModel.getName(), tableDefinition.getColumn(column));
+        });
     }
 
     @Override

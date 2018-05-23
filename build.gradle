@@ -8,7 +8,7 @@ buildscript {
             }
         }
 
-        jooqVersion = "3.10.7"
+        jooqVersion = "3.10.4"
         junitVersion = "5.2.0"
         jacksonVersion = "2.9.5"
     }

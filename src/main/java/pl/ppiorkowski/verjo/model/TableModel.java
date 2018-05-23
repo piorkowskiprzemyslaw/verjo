@@ -3,10 +3,12 @@ package pl.ppiorkowski.verjo.model;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.ppiorkowski.verjo.model.db_engine.DbEngineConverter;
+import pl.ppiorkowski.verjo.xsd.AlternateKey;
 import pl.ppiorkowski.verjo.xsd.Column;
 import pl.ppiorkowski.verjo.xsd.PrimaryKey;
 import pl.ppiorkowski.verjo.xsd.Table;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,9 +69,33 @@ public class TableModel extends ModelWithProperties {
         if (columns.isEmpty()) {
             String tableName = getName();
             String schemaName = getSchema().orElse("default");
-            log.warn("Empty Primary Key columns", "Empty columns list in primary key definition. " +
-                    "Table: [" + tableName + "] schema:[" + schemaName + "]");
+            log.warn("Empty Primary Key columns list", "Empty columns list in primary key definition. " +
+                    "Table: [" + tableName + "] schema: [" + schemaName + "]");
         }
         return columns;
+    }
+
+    public List<AlternateKeyModel> getAlternateKeys() {
+        return table.getAlternateKeys().getAlternateKey().stream()
+                .map(this::toAlternateKeyModel)
+                .collect(Collectors.toList());
+    }
+
+    private AlternateKeyModel toAlternateKeyModel(AlternateKey ak) {
+        List<String> akColumns = ak.getColumns().getColumn().stream()
+                .map(jaxb -> (Column) jaxb.getValue())
+                .map(Column::getName)
+                .collect(Collectors.toList());
+        if (akColumns.isEmpty()) {
+            String tableName = getName();
+            String schemaName = getSchema().orElse("default");
+            log.warn("Empty Alternate Key columns list", "Empty columns list in alternate key definition. " +
+                    "Table: [" + tableName + "] schema: [" + schemaName + "]");
+        }
+
+        return AlternateKeyModel.builder()
+                .name(ak.getName())
+                .columns(akColumns)
+                .build();
     }
 }
