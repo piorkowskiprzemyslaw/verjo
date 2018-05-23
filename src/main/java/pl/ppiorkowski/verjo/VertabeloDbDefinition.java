@@ -5,6 +5,7 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.util.*;
 import pl.ppiorkowski.verjo.model.DbModel;
+import pl.ppiorkowski.verjo.model.PrimaryKeyModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import static pl.ppiorkowski.verjo.model.DbModelFactory.build;
 
 public class VertabeloDbDefinition extends AbstractDatabase {
 
-    private static final String XML_FILE_PROPERTY = "vertabeloXMLFile";
+    private static final String XML_FILE_PROPERTY = "vertabelo-xml-file";
 
     private DbModel dbModel;
 
@@ -39,7 +40,13 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadPrimaryKeys(DefaultRelations r) {
-
+        dbModel.selectTables(getInputSchemata()).forEach(table -> {
+            SchemaDefinition schemaDef = getSchema(table.getSchemaString());
+            TableDefinition tableDef = getTable(schemaDef, table.getName());
+            PrimaryKeyModel pk = table.getPrimaryKey();
+            pk.getColumnNames()
+                    .forEach(pkColumn -> r.addPrimaryKey(pk.getName(), tableDef.getColumn(pkColumn)));
+        });
     }
 
     @Override
