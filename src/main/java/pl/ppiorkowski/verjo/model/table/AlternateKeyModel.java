@@ -1,4 +1,4 @@
-package pl.ppiorkowski.verjo.model;
+package pl.ppiorkowski.verjo.model.table;
 
 import java.util.List;
 

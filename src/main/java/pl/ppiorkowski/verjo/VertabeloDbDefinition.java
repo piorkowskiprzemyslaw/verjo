@@ -1,21 +1,36 @@
 package pl.ppiorkowski.verjo;
 
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
-import org.jooq.util.*;
-
-import pl.ppiorkowski.verjo.model.AlternateKeyModel;
-import pl.ppiorkowski.verjo.model.DbModel;
-import pl.ppiorkowski.verjo.model.PrimaryKeyModel;
+import static java.util.Collections.emptyList;
+import static pl.ppiorkowski.verjo.model.DbModelFactory.build;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-import static pl.ppiorkowski.verjo.model.DbModelFactory.build;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
+import org.jooq.util.AbstractDatabase;
+import org.jooq.util.ArrayDefinition;
+import org.jooq.util.CatalogDefinition;
+import org.jooq.util.DefaultCheckConstraintDefinition;
+import org.jooq.util.DefaultDataTypeDefinition;
+import org.jooq.util.DefaultRelations;
+import org.jooq.util.DefaultSequenceDefinition;
+import org.jooq.util.DomainDefinition;
+import org.jooq.util.EnumDefinition;
+import org.jooq.util.PackageDefinition;
+import org.jooq.util.RoutineDefinition;
+import org.jooq.util.SchemaDefinition;
+import org.jooq.util.SequenceDefinition;
+import org.jooq.util.TableDefinition;
+import org.jooq.util.UDTDefinition;
+
+import pl.ppiorkowski.verjo.model.DbModel;
+import pl.ppiorkowski.verjo.model.TableModel;
+import pl.ppiorkowski.verjo.model.table.AlternateKeyModel;
+import pl.ppiorkowski.verjo.model.table.PrimaryKeyModel;
 
 public class VertabeloDbDefinition extends AbstractDatabase {
 
@@ -61,10 +76,9 @@ public class VertabeloDbDefinition extends AbstractDatabase {
     }
 
     private void loadAlternateKey(DefaultRelations relations, TableDefinition tableDefinition,
-            AlternateKeyModel alternateKeyModel) {
-        alternateKeyModel.getColumns().forEach(column -> {
-            relations.addUniqueKey(alternateKeyModel.getName(), tableDefinition.getColumn(column));
-        });
+            AlternateKeyModel alternateKey) {
+        alternateKey.getColumns()
+                .forEach(column -> relations.addUniqueKey(alternateKey.getName(), tableDefinition.getColumn(column)));
     }
 
     @Override
@@ -74,7 +88,24 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadCheckConstraints(DefaultRelations r) {
+        dbModel.selectTables(getInputSchemata()).forEach(t -> loadTableCheckConstraints(r, t));
+    }
 
+    private void loadTableCheckConstraints(DefaultRelations r, TableModel table) {
+        SchemaDefinition schema = getSchema(table.getSchemaString());
+        TableDefinition tableDef = getTable(schema, table.getName());
+
+        table.getTableChecks().forEach(tc -> {
+            DefaultCheckConstraintDefinition constraint = new DefaultCheckConstraintDefinition(schema,
+                    tableDef, tc.getName(), tc.getCheckExpression());
+            r.addCheckConstraint(tableDef, constraint);
+        });
+
+        table.getColumnChecks().forEach(cc -> {
+            DefaultCheckConstraintDefinition constraint = new DefaultCheckConstraintDefinition(schema,
+                    tableDef, cc.getName(), cc.getCheckExpression());
+            r.addCheckConstraint(tableDef, constraint);
+        });
     }
 
     @Override

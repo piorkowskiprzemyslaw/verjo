@@ -1,12 +1,13 @@
 package pl.ppiorkowski.verjo.model.provider;
 
-import lombok.RequiredArgsConstructor;
-
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 class VerJoXMLReader {

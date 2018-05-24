@@ -158,7 +158,7 @@ class DbModelTest {
     }
 
     @Nested
-    @DisplayName("reply with filtered views stream")
+    @DisplayName("reply with filtered sequences stream")
     class FilterSequences {
 
         private DbModel dbModel;

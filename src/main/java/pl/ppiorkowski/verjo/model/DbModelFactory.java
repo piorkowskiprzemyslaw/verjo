@@ -1,10 +1,10 @@
 package pl.ppiorkowski.verjo.model;
 
+import static lombok.AccessLevel.PRIVATE;
+
 import lombok.AllArgsConstructor;
 import pl.ppiorkowski.verjo.model.provider.DatabaseModelProvider;
 import pl.ppiorkowski.verjo.xsd.DatabaseModel;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @AllArgsConstructor(access = PRIVATE)
 public class DbModelFactory {

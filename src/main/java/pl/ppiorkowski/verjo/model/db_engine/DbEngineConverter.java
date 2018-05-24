@@ -1,15 +1,20 @@
 package pl.ppiorkowski.verjo.model.db_engine;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import org.jooq.SQLDialect;
-import org.jooq.tools.JooqLogger;
-import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
+import static org.jooq.SQLDialect.DEFAULT;
+import static org.jooq.SQLDialect.HSQLDB;
+import static org.jooq.SQLDialect.MYSQL;
+import static org.jooq.SQLDialect.POSTGRES_9_3;
+import static org.jooq.SQLDialect.SQLITE;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jooq.SQLDialect.*;
+import org.jooq.SQLDialect;
+import org.jooq.tools.JooqLogger;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DbEngineConverter {

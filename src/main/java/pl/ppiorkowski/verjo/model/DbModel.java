@@ -1,17 +1,18 @@
 package pl.ppiorkowski.verjo.model;
 
-import lombok.RequiredArgsConstructor;
-import org.jooq.SQLDialect;
-import pl.ppiorkowski.verjo.model.db_engine.DbEngineConverter;
-import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
-import pl.ppiorkowski.verjo.xsd.DatabaseModel;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.jooq.SQLDialect;
+
+import lombok.RequiredArgsConstructor;
+import pl.ppiorkowski.verjo.model.db_engine.DbEngineConverter;
+import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
+import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 
 @RequiredArgsConstructor
 public class DbModel {

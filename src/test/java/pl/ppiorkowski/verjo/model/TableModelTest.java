@@ -2,13 +2,10 @@ package pl.ppiorkowski.verjo.model;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +17,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import pl.ppiorkowski.verjo.model.table.AlternateKeyModel;
+import pl.ppiorkowski.verjo.model.table.PrimaryKeyModel;
 import pl.ppiorkowski.verjo.xsd.AlternateKey;
 import pl.ppiorkowski.verjo.xsd.AlternateKeyColumns;
 import pl.ppiorkowski.verjo.xsd.AlternateKeys;
@@ -42,7 +41,7 @@ class TableModelTest {
         tableModel = TableModel.of(table);
     }
 
-    JAXBElement<Object> createColumn(Column c) {
+    private JAXBElement<Object> createColumn(Column c) {
         QName qName = new QName("nsURI", "localPart");
         return new JAXBElement<>(qName, Object.class, c);
     }
@@ -204,7 +203,5 @@ class TableModelTest {
                 assertIterableEquals(emptyList(), ak2.getColumns());
             }
         }
-
     }
-
 }

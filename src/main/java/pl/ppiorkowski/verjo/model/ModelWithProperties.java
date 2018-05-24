@@ -1,9 +1,9 @@
 package pl.ppiorkowski.verjo.model;
 
+import java.util.Optional;
+
 import pl.ppiorkowski.verjo.xsd.Properties;
 import pl.ppiorkowski.verjo.xsd.Property;
-
-import java.util.Optional;
 
 abstract class ModelWithProperties {
 

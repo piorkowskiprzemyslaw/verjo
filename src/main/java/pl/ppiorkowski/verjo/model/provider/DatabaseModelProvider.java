@@ -1,9 +1,10 @@
 package pl.ppiorkowski.verjo.model.provider;
 
-import pl.ppiorkowski.verjo.xsd.DatabaseModel;
+import java.io.InputStream;
 
 import javax.xml.bind.JAXB;
-import java.io.InputStream;
+
+import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 
 public class DatabaseModelProvider {
 

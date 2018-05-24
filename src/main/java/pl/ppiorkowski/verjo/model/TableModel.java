@@ -1,14 +1,5 @@
 package pl.ppiorkowski.verjo.model;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import pl.ppiorkowski.verjo.model.db_engine.DbEngineConverter;
-import pl.ppiorkowski.verjo.xsd.AlternateKey;
-import pl.ppiorkowski.verjo.xsd.Column;
-import pl.ppiorkowski.verjo.xsd.PrimaryKey;
-import pl.ppiorkowski.verjo.xsd.Table;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,6 +7,16 @@ import java.util.stream.Collectors;
 import javax.xml.bind.JAXBElement;
 
 import org.jooq.tools.JooqLogger;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import pl.ppiorkowski.verjo.model.table.AlternateKeyModel;
+import pl.ppiorkowski.verjo.model.table.ColumnCheckModel;
+import pl.ppiorkowski.verjo.model.table.PrimaryKeyModel;
+import pl.ppiorkowski.verjo.model.table.TableCheckModel;
+import pl.ppiorkowski.verjo.xsd.AlternateKey;
+import pl.ppiorkowski.verjo.xsd.Column;
+import pl.ppiorkowski.verjo.xsd.Table;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class TableModel extends ModelWithProperties {
@@ -97,5 +98,20 @@ public class TableModel extends ModelWithProperties {
                 .name(ak.getName())
                 .columns(akColumns)
                 .build();
+    }
+
+    public List<TableCheckModel> getTableChecks() {
+        return table.getTableChecks().getTableCheck().stream()
+                .filter(tc -> tc.getCheckExpression() != null)
+                .map(tc -> new TableCheckModel(tc.getName(), tc.getCheckExpression()))
+                .collect(Collectors.toList());
+    }
+
+    public List<ColumnCheckModel> getColumnChecks() {
+        String tableName = table.getName();
+        return table.getColumns().getColumn().stream()
+                .map(c -> new ColumnCheckModel(tableName, c))
+                .filter(ColumnCheckModel::isMeaningful)
+                .collect(Collectors.toList());
     }
 }

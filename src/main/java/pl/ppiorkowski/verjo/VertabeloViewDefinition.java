@@ -1,11 +1,16 @@
 package pl.ppiorkowski.verjo;
 
-import org.jooq.util.*;
-import pl.ppiorkowski.verjo.model.ViewModel;
-import pl.ppiorkowski.verjo.xsd.ViewColumn;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jooq.util.AbstractTableDefinition;
+import org.jooq.util.ColumnDefinition;
+import org.jooq.util.DefaultColumnDefinition;
+import org.jooq.util.DefaultDataTypeDefinition;
+import org.jooq.util.SchemaDefinition;
+
+import pl.ppiorkowski.verjo.model.ViewModel;
+import pl.ppiorkowski.verjo.xsd.ViewColumn;
 
 class VertabeloViewDefinition extends AbstractTableDefinition {
 

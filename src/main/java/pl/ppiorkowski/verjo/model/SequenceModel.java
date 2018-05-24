@@ -1,10 +1,10 @@
 package pl.ppiorkowski.verjo.model;
 
+import java.util.Optional;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.ppiorkowski.verjo.xsd.Sequence;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class SequenceModel extends ModelWithProperties {
