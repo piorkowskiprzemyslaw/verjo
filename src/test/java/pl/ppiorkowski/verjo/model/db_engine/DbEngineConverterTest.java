@@ -1,18 +1,23 @@
 package pl.ppiorkowski.verjo.model.db_engine;
 
+import static org.jooq.SQLDialect.DEFAULT;
+import static org.jooq.SQLDialect.HSQLDB;
+import static org.jooq.SQLDialect.MYSQL;
+import static org.jooq.SQLDialect.POSTGRES_9_3;
+import static org.jooq.SQLDialect.SQLITE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.stream.Stream;
+
 import org.jooq.SQLDialect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
 import pl.ppiorkowski.verjo.xsd.DatabaseEngine;
-
-import java.util.stream.Stream;
-
-import static org.jooq.SQLDialect.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Database engine converter should")
 class DbEngineConverterTest {

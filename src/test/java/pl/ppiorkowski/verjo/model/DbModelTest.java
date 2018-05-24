@@ -1,10 +1,11 @@
 package pl.ppiorkowski.verjo.model;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import pl.ppiorkowski.verjo.xsd.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pl.ppiorkowski.verjo.model.VerJoTestUtil.buildSchemaProperties;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,10 +14,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.*;
-import static pl.ppiorkowski.verjo.model.DbModel.SCHEMA_PROPERTY_NAME;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import pl.ppiorkowski.verjo.xsd.DatabaseModel;
+import pl.ppiorkowski.verjo.xsd.Sequence;
+import pl.ppiorkowski.verjo.xsd.Sequences;
+import pl.ppiorkowski.verjo.xsd.Table;
+import pl.ppiorkowski.verjo.xsd.Tables;
+import pl.ppiorkowski.verjo.xsd.View;
+import pl.ppiorkowski.verjo.xsd.Views;
 
 @DisplayName("DbModel should")
 class DbModelTest {
@@ -215,13 +224,6 @@ class DbModelTest {
     private void addSequenceWithSchema(String schemaName) {
         xmlDatabaseModel.getSequences().getSequence()
                 .add(new Sequence().withProperties(buildSchemaProperties(schemaName)));
-    }
-
-    private Properties buildSchemaProperties(String schemaName) {
-        return new Properties()
-                .withProperty(new Property()
-                        .withName(SCHEMA_PROPERTY_NAME)
-                        .withValue(schemaName));
     }
 
 }

@@ -14,6 +14,7 @@ import org.jooq.impl.DSL;
 import org.jooq.util.AbstractDatabase;
 import org.jooq.util.ArrayDefinition;
 import org.jooq.util.CatalogDefinition;
+import org.jooq.util.ColumnDefinition;
 import org.jooq.util.DefaultCheckConstraintDefinition;
 import org.jooq.util.DefaultDataTypeDefinition;
 import org.jooq.util.DefaultRelations;
@@ -57,7 +58,7 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadPrimaryKeys(DefaultRelations r) {
-        dbModel.selectTables(getInputSchemata()).forEach(table -> {
+        getModel().selectTables(getInputSchemata()).forEach(table -> {
             SchemaDefinition schemaDef = getSchema(table.getSchemaString());
             TableDefinition tableDef = getTable(schemaDef, table.getName());
             PrimaryKeyModel pk = table.getPrimaryKey();
@@ -68,7 +69,7 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadUniqueKeys(DefaultRelations r) {
-        dbModel.selectTables(getInputSchemata()).forEach(table -> {
+        getModel().selectTables(getInputSchemata()).forEach(table -> {
             SchemaDefinition schemaDef = getSchema(table.getSchemaString());
             TableDefinition tableDef = getTable(schemaDef, table.getName());
             table.getAlternateKeys().forEach(ak -> loadAlternateKey(r, tableDef, ak));
@@ -77,18 +78,26 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     private void loadAlternateKey(DefaultRelations relations, TableDefinition tableDefinition,
             AlternateKeyModel alternateKey) {
-        alternateKey.getColumns()
-                .forEach(column -> relations.addUniqueKey(alternateKey.getName(), tableDefinition.getColumn(column)));
+        alternateKey.getColumnNames()
+                .forEach(columnName -> relations.addUniqueKey(alternateKey.getName(), tableDefinition.getColumn(columnName)));
     }
 
     @Override
     protected void loadForeignKeys(DefaultRelations r) {
+        getModel().getForeignKeys(getInputSchemata()).forEach(fk -> {
+            SchemaDefinition schemaDef = getSchema(fk.getUniqueKeySchemaName());
+            TableDefinition fkTableDef = getTable(schemaDef, fk.getFkTableName());
 
+            fk.getFkTableReferenceColumnNames().forEach(referencedColumn -> {
+                ColumnDefinition columnDef = fkTableDef.getColumn(referencedColumn);
+                r.addForeignKey(fk.getForeignKeyName(), fk.getUniqueKeyName(), columnDef, schemaDef);
+            });
+        });
     }
 
     @Override
     protected void loadCheckConstraints(DefaultRelations r) {
-        dbModel.selectTables(getInputSchemata()).forEach(t -> loadTableCheckConstraints(r, t));
+        getModel().selectTables(getInputSchemata()).forEach(t -> loadTableCheckConstraints(r, t));
     }
 
     private void loadTableCheckConstraints(DefaultRelations r, TableModel table) {

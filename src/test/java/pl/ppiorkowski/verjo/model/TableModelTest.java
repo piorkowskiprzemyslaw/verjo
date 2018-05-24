@@ -5,12 +5,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static pl.ppiorkowski.verjo.model.VerJoTestUtil.buildJAXBWithColumn;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,11 +41,6 @@ class TableModelTest {
         tableModel = TableModel.of(table);
     }
 
-    private JAXBElement<Object> createColumn(Column c) {
-        QName qName = new QName("nsURI", "localPart");
-        return new JAXBElement<>(qName, Object.class, c);
-    }
-
     @Nested
     @DisplayName("return primary key data")
     class PrimaryKeyTest {
@@ -62,7 +57,7 @@ class TableModelTest {
         void addPkColumn(String columnName) {
             Column col = new Column().withName(columnName);
             table.getPrimaryKey().getColumns()
-                    .withColumn(createColumn(col));
+                    .withColumn(buildJAXBWithColumn(col));
         }
 
         @Nested
@@ -132,7 +127,7 @@ class TableModelTest {
         void addAlternateKey(String name, List<String> columns) {
             List<JAXBElement<Object>> akColumns = columns.stream()
                     .map(colName -> new Column().withName(colName))
-                    .map(TableModelTest.this::createColumn)
+                    .map(VerJoTestUtil::buildJAXBWithColumn)
                     .collect(Collectors.toList());
 
             AlternateKey ak = new AlternateKey().withName(name)
@@ -196,11 +191,11 @@ class TableModelTest {
                 assertEquals(2, alternateKeys.size());
                 AlternateKeyModel ak1 = alternateKeys.get(0);
                 assertEquals("ak1", ak1.getName());
-                assertIterableEquals(singletonList("ak1c1"), ak1.getColumns());
+                assertIterableEquals(singletonList("ak1c1"), ak1.getColumnNames());
 
                 AlternateKeyModel ak2 = alternateKeys.get(1);
                 assertEquals("ak2", ak2.getName());
-                assertIterableEquals(emptyList(), ak2.getColumns());
+                assertIterableEquals(emptyList(), ak2.getColumnNames());
             }
         }
     }

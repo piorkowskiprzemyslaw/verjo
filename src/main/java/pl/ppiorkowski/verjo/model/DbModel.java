@@ -35,6 +35,11 @@ public class DbModel {
                 .map(SequenceModel::of);
     }
 
+    private Stream<ReferenceModel> references() {
+        return databaseModel.getReferences().getReference().stream()
+                .map(ReferenceModel::of);
+    }
+
     public SQLDialect getDialect() {
         DatabaseEngine dbEngine = databaseModel.getDatabaseEngine();
         return DbEngineConverter.asSQLDialect(dbEngine);
@@ -84,4 +89,27 @@ public class DbModel {
                 });
     }
 
+    public Set<ForeignKeyModel> getForeignKeys(List<String> inputSchemas) {
+        return references()
+                .filter(reference -> reference.isReferenceInSchema("", inputSchemas))
+                .map(this::buildFKFromReference)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
+    }
+
+    private Optional<ForeignKeyModel> buildFKFromReference(ReferenceModel referenceModel) {
+        return referenceModel.getUniqueKeyName()
+                .map(uniqueKeyName -> buildFKFromReferenceAndUK(uniqueKeyName, referenceModel));
+    }
+
+    private ForeignKeyModel buildFKFromReferenceAndUK(String uk, ReferenceModel referenceModel) {
+        return ForeignKeyModel.builder()
+                .uniqueKeyName(uk)
+                .uniqueKeySchemaName(referenceModel.getPKTable().getSchemaString())
+                .foreignKeyName(referenceModel.getName())
+                .fkTable(referenceModel.getFKTable())
+                .fkTableReferenceColumns(referenceModel.getFKTableReferenceColumns())
+                .build();
+    }
 }

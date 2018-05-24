@@ -34,4 +34,8 @@ public class ViewModel extends ModelWithProperties {
     public List<ViewColumn> getColumns() {
         return view.getViewColumns().getViewColumn();
     }
+
+    public boolean isInsideOneOfSchemas(List<String> inputSchemas) {
+        return inputSchemas.contains(getSchemaString());
+    }
 }

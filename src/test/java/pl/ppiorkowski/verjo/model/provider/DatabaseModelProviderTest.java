@@ -1,23 +1,26 @@
 package pl.ppiorkowski.verjo.model.provider;
 
-import com.google.common.jimfs.Jimfs;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import pl.ppiorkowski.verjo.xsd.DatabaseModel;
+import static com.google.common.jimfs.Configuration.unix;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import javax.xml.bind.DataBindingException;
-import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static com.google.common.jimfs.Configuration.unix;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import javax.xml.bind.DataBindingException;
+import javax.xml.bind.JAXB;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import com.google.common.jimfs.Jimfs;
+
+import pl.ppiorkowski.verjo.xsd.DatabaseModel;
 
 @DisplayName("DatbaseModelProvider should")
 class DatabaseModelProviderTest {

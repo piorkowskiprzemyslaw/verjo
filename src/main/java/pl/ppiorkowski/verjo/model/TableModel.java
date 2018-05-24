@@ -9,7 +9,9 @@ import javax.xml.bind.JAXBElement;
 import org.jooq.tools.JooqLogger;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import pl.ppiorkowski.verjo.model.table.AlternateKeyModel;
 import pl.ppiorkowski.verjo.model.table.ColumnCheckModel;
 import pl.ppiorkowski.verjo.model.table.PrimaryKeyModel;
@@ -18,17 +20,14 @@ import pl.ppiorkowski.verjo.xsd.AlternateKey;
 import pl.ppiorkowski.verjo.xsd.Column;
 import pl.ppiorkowski.verjo.xsd.Table;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(callSuper = false)
+@Value(staticConstructor = "of")
 public class TableModel extends ModelWithProperties {
 
     private static final JooqLogger log = JooqLogger.getLogger(TableModel.class);
     private static final String SCHEMA_PROPERTY_NAME = "schema";
 
     private final Table table;
-
-    public static TableModel of(Table table) {
-        return new TableModel(table);
-    }
 
     public Optional<String> getSchema() {
         return getPropertyValue(SCHEMA_PROPERTY_NAME, table.getProperties());
@@ -49,7 +48,7 @@ public class TableModel extends ModelWithProperties {
     public PrimaryKeyModel getPrimaryKey() {
         return PrimaryKeyModel.builder()
                 .name(getPrimaryKeyName())
-                .columnNames(getPkColumnNames())
+                .columns(getPkColumns())
                 .build();
     }
 
@@ -61,11 +60,10 @@ public class TableModel extends ModelWithProperties {
         return String.format("%s_PK", table.getName());
     }
 
-    private List<String> getPkColumnNames() {
+    private List<Column> getPkColumns() {
         List<JAXBElement<Object>> pkColumns = table.getPrimaryKey().getColumns().getColumn();
-        List<String> columns = pkColumns.stream()
+        List<Column> columns = pkColumns.stream()
                 .map(jaxb -> (Column) jaxb.getValue())
-                .map(Column::getName)
                 .collect(Collectors.toList());
         if (columns.isEmpty()) {
             String tableName = getName();
@@ -83,9 +81,8 @@ public class TableModel extends ModelWithProperties {
     }
 
     private AlternateKeyModel toAlternateKeyModel(AlternateKey ak) {
-        List<String> akColumns = ak.getColumns().getColumn().stream()
+        List<Column> akColumns = ak.getColumns().getColumn().stream()
                 .map(jaxb -> (Column) jaxb.getValue())
-                .map(Column::getName)
                 .collect(Collectors.toList());
         if (akColumns.isEmpty()) {
             String tableName = getName();
