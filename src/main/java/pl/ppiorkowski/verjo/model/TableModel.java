@@ -29,12 +29,9 @@ public class TableModel extends ModelWithProperties {
 
     private final Table table;
 
-    public Optional<String> getSchema() {
-        return getPropertyValue(SCHEMA_PROPERTY_NAME, table.getProperties());
-    }
-
-    public String getSchemaString() {
-        return getSchema().orElse("");
+    public String getSchema(String defaultSchema) {
+        return getPropertyValue(SCHEMA_PROPERTY_NAME, table.getProperties())
+                .orElse(defaultSchema);
     }
 
     public String getName() {
@@ -67,9 +64,8 @@ public class TableModel extends ModelWithProperties {
                 .collect(Collectors.toList());
         if (columns.isEmpty()) {
             String tableName = getName();
-            String schemaName = getSchema().orElse("default");
             log.warn("Empty Primary Key columns list", "Empty columns list in primary key definition. " +
-                    "Table: [" + tableName + "] schema: [" + schemaName + "]");
+                    "Table: [" + tableName + "]");
         }
         return columns;
     }
@@ -86,9 +82,8 @@ public class TableModel extends ModelWithProperties {
                 .collect(Collectors.toList());
         if (akColumns.isEmpty()) {
             String tableName = getName();
-            String schemaName = getSchema().orElse("default");
             log.warn("Empty Alternate Key columns list", "Empty columns list in alternate key definition. " +
-                    "Table: [" + tableName + "] schema: [" + schemaName + "]");
+                    "Table: [" + tableName + "]");
         }
 
         return AlternateKeyModel.builder()

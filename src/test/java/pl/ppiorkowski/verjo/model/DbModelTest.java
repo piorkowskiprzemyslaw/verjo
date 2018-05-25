@@ -2,14 +2,11 @@ package pl.ppiorkowski.verjo.model;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pl.ppiorkowski.verjo.model.VerJoTestUtil.buildSchemaProperties;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,6 +26,7 @@ import pl.ppiorkowski.verjo.xsd.Views;
 
 @DisplayName("DbModel should")
 class DbModelTest {
+    private static final String DEFAULT_SCHEMA = "defaultSchema";
 
     private DatabaseModel xmlDatabaseModel;
 
@@ -55,24 +53,39 @@ class DbModelTest {
             DbModel dbModel = new DbModel(xmlDatabaseModel);
 
             // when
-            Set<String> schemaNames = dbModel.getSchemaNames();
+            Set<String> schemaNames = dbModel.getSchemaNames(DEFAULT_SCHEMA);
 
             // then
-            assertEquals(schemaNames.size(), 3);
-            assertTrue(schemaNames.containsAll(Arrays.asList("schema1", "schema2", "schema3")));
+            assertThat(schemaNames).containsExactlyInAnyOrder("schema1", "schema2", "schema3");
         }
 
         @Test
-        @DisplayName("set which is empty when none of element defines custom getSchema")
+        @DisplayName("set with defaultSchema when none of element defines custom getSchema")
+        void shouldReturnDefaultSchema() {
+            // given
+            addTableWithSchema(null);
+            addViewWithSchema(null);
+            addSequenceWithSchema(null);
+            DbModel dbModel = new DbModel(xmlDatabaseModel);
+
+            // when
+            Set<String> schemaNames = dbModel.getSchemaNames(DEFAULT_SCHEMA);
+
+            // then
+            assertThat(schemaNames).containsExactly(DEFAULT_SCHEMA);
+        }
+
+        @Test
+        @DisplayName("empty set when database has no views, tables or sequences")
         void shouldReturnEmptySet() {
             // given
             DbModel dbModel = new DbModel(xmlDatabaseModel);
 
             // when
-            Set<String> schemaNames = dbModel.getSchemaNames();
+            Set<String> schemaNames = dbModel.getSchemaNames(DEFAULT_SCHEMA);
 
             // then
-            assertIterableEquals(schemaNames, emptyList());
+            assertThat(schemaNames).isEmpty();
         }
     }
 
@@ -93,7 +106,7 @@ class DbModelTest {
         @DisplayName("which is empty when input schema list is empty")
         void shouldReturnEmptyStream1() {
             // when
-            Stream<TableModel> stream = dbModel.selectTables(emptyList());
+            Stream<TableModel> stream = dbModel.selectTables(emptyList(), DEFAULT_SCHEMA);
 
             // then
             assertEquals(stream.toArray().length, 0);
@@ -103,7 +116,7 @@ class DbModelTest {
         @DisplayName("which is empty when no element fulfills filtering criteria")
         void shouldReturnEmptyStream2() {
             // when
-            Stream<TableModel> stream = dbModel.selectTables(singletonList("schema3"));
+            Stream<TableModel> stream = dbModel.selectTables(singletonList("schema3"), DEFAULT_SCHEMA);
 
             // then
             assertEquals(stream.toArray().length, 0);
@@ -113,11 +126,11 @@ class DbModelTest {
         @DisplayName("which contains tables from given schemas")
         void shouldReturnFilteredTable() {
             // when
-            Stream<TableModel> stream = dbModel.selectTables(singletonList("schema1"));
+            Stream<TableModel> stream = dbModel.selectTables(singletonList("schema1"), DEFAULT_SCHEMA);
 
             // then
-            List<Optional<String>> schemas = stream.map(TableModel::getSchema).collect(Collectors.toList());
-            assertEquals(schemas, singletonList(Optional.of("schema1")));
+            List<String> schemas = stream.map(t -> t.getSchema(DEFAULT_SCHEMA)).collect(Collectors.toList());
+            assertEquals(schemas, singletonList("schema1"));
         }
     }
 
@@ -138,7 +151,7 @@ class DbModelTest {
         @DisplayName("which is empty when input schema list is empty")
         void shouldReturnEmptyStream1() {
             // when
-            Stream<ViewModel> stream = dbModel.selectViews(emptyList());
+            Stream<ViewModel> stream = dbModel.selectViews(emptyList(), DEFAULT_SCHEMA);
 
             // then
             assertEquals(stream.toArray().length, 0);
@@ -148,7 +161,7 @@ class DbModelTest {
         @DisplayName("which is empty when no element fulfills filtering criteria")
         void shouldReturnEmptyStream2() {
             // when
-            Stream<ViewModel> stream = dbModel.selectViews(singletonList("schema3"));
+            Stream<ViewModel> stream = dbModel.selectViews(singletonList("schema3"), DEFAULT_SCHEMA);
 
             // then
             assertEquals(stream.toArray().length, 0);
@@ -158,11 +171,11 @@ class DbModelTest {
         @DisplayName("which contains views from given schemas")
         void shouldReturnFilteredTable() {
             // when
-            Stream<ViewModel> stream = dbModel.selectViews(singletonList("viewSchema1"));
+            Stream<ViewModel> stream = dbModel.selectViews(singletonList("viewSchema1"), DEFAULT_SCHEMA);
 
             // then
-            List<Optional<String>> schemas = stream.map(ViewModel::getSchema).collect(Collectors.toList());
-            assertEquals(schemas, singletonList(Optional.of("viewSchema1")));
+            List<String> schemas = stream.map(v -> v.getSchema(DEFAULT_SCHEMA)).collect(Collectors.toList());
+            assertEquals(schemas, singletonList("viewSchema1"));
         }
     }
 
@@ -183,7 +196,7 @@ class DbModelTest {
         @DisplayName("which is empty when input schema list is empty")
         void shouldReturnEmptyStream1() {
             // when
-            Stream<SequenceModel> stream = dbModel.selectSequences(emptyList());
+            Stream<SequenceModel> stream = dbModel.selectSequences(emptyList(), DEFAULT_SCHEMA);
 
             // then
             assertEquals(stream.toArray().length, 0);
@@ -193,7 +206,7 @@ class DbModelTest {
         @DisplayName("which is empty when no element fulfills filtering criteria")
         void shouldReturnEmptyStream2() {
             // when
-            Stream<SequenceModel> stream = dbModel.selectSequences(singletonList("anotherSchema1"));
+            Stream<SequenceModel> stream = dbModel.selectSequences(singletonList("anotherSchema1"), DEFAULT_SCHEMA);
 
             // then
             assertEquals(stream.toArray().length, 0);
@@ -203,11 +216,11 @@ class DbModelTest {
         @DisplayName("which contains views from given schemas")
         void shouldReturnFilteredStream() {
             // when
-            Stream<SequenceModel> stream = dbModel.selectSequences(singletonList("sequenceSchema2"));
+            Stream<SequenceModel> stream = dbModel.selectSequences(singletonList("sequenceSchema2"), DEFAULT_SCHEMA);
 
             // then
-            List<Optional<String>> schemas = stream.map(SequenceModel::getSchema).collect(Collectors.toList());
-            assertEquals(schemas, singletonList(Optional.of("sequenceSchema2")));
+            List<String> schemas = stream.map(s -> s.getSchema(DEFAULT_SCHEMA)).collect(Collectors.toList());
+            assertEquals(schemas, singletonList("sequenceSchema2"));
         }
     }
 

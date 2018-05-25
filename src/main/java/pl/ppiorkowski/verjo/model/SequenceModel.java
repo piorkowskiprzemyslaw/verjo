@@ -1,7 +1,5 @@
 package pl.ppiorkowski.verjo.model;
 
-import java.util.Optional;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.ppiorkowski.verjo.xsd.Sequence;
@@ -17,12 +15,9 @@ public class SequenceModel extends ModelWithProperties {
         return new SequenceModel(sequence);
     }
 
-    public Optional<String> getSchema() {
-        return getPropertyValue(SCHEMA_PROPERTY_NAME, sequence.getProperties());
-    }
-
-    public String getSchemaString() {
-        return getSchema().orElse("");
+    public String getSchema(String defaultSchema) {
+        return getPropertyValue(SCHEMA_PROPERTY_NAME, sequence.getProperties())
+                .orElse(defaultSchema);
     }
 
     public String getName() {

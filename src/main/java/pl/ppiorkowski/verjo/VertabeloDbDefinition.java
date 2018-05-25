@@ -1,10 +1,12 @@
 package pl.ppiorkowski.verjo;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static pl.ppiorkowski.verjo.model.DbModelFactory.build;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,25 +31,49 @@ import org.jooq.util.TableDefinition;
 import org.jooq.util.UDTDefinition;
 
 import pl.ppiorkowski.verjo.model.DbModel;
+import pl.ppiorkowski.verjo.model.SequenceModel;
 import pl.ppiorkowski.verjo.model.TableModel;
+import pl.ppiorkowski.verjo.model.ViewModel;
 import pl.ppiorkowski.verjo.model.table.AlternateKeyModel;
 import pl.ppiorkowski.verjo.model.table.PrimaryKeyModel;
 
 public class VertabeloDbDefinition extends AbstractDatabase {
 
     private static final String XML_FILE_PROPERTY = "vertabelo-xml-file";
+    private static final String DEFAULT_SCHEMA_PROPERTY = "vertabelo-default-schema";
+    private static final String DEFAULT_SCHEMA_DEFAULT_VALUE = "";
 
     private DbModel dbModel;
 
-    private String getXmlFileProperty() {
+    private String getXmlFilePath() {
         return getProperties().getProperty(XML_FILE_PROPERTY);
+    }
+
+    private String getDefaultSchema() {
+        return Optional.ofNullable(getProperties().getProperty(DEFAULT_SCHEMA_PROPERTY))
+                .orElse(DEFAULT_SCHEMA_DEFAULT_VALUE);
     }
 
     private DbModel getModel() {
         if (null == dbModel) {
-            dbModel = build(getXmlFileProperty());
+            dbModel = build(getXmlFilePath());
         }
         return dbModel;
+    }
+
+    private SchemaDefinition getTableSchema(TableModel t) {
+        String schemaName = t.getSchema(getDefaultSchema());
+        return getSchema(schemaName);
+    }
+
+    private SchemaDefinition getViewSchema(ViewModel v) {
+        String schemaName = v.getSchema(getDefaultSchema());
+        return getSchema(schemaName);
+    }
+
+    private SchemaDefinition getSequenceSchema(SequenceModel s) {
+        String schemaName = s.getSchema(getDefaultSchema());
+        return getSchema(schemaName);
     }
 
     @Override
@@ -58,8 +84,8 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadPrimaryKeys(DefaultRelations r) {
-        getModel().selectTables(getInputSchemata()).forEach(table -> {
-            SchemaDefinition schemaDef = getSchema(table.getSchemaString());
+        getModel().selectTables(getInputSchemata(), getDefaultSchema()).forEach(table -> {
+            SchemaDefinition schemaDef = getTableSchema(table);
             TableDefinition tableDef = getTable(schemaDef, table.getName());
             PrimaryKeyModel pk = table.getPrimaryKey();
             pk.getColumnNames()
@@ -69,8 +95,8 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadUniqueKeys(DefaultRelations r) {
-        getModel().selectTables(getInputSchemata()).forEach(table -> {
-            SchemaDefinition schemaDef = getSchema(table.getSchemaString());
+        getModel().selectTables(getInputSchemata(), getDefaultSchema()).forEach(table -> {
+            SchemaDefinition schemaDef = getTableSchema(table);
             TableDefinition tableDef = getTable(schemaDef, table.getName());
             table.getAlternateKeys().forEach(ak -> loadAlternateKey(r, tableDef, ak));
         });
@@ -84,7 +110,7 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadForeignKeys(DefaultRelations r) {
-        getModel().getForeignKeys(getInputSchemata()).forEach(fk -> {
+        getModel().getForeignKeys(getInputSchemata(), getDefaultSchema()).forEach(fk -> {
             SchemaDefinition schemaDef = getSchema(fk.getUniqueKeySchemaName());
             TableDefinition fkTableDef = getTable(schemaDef, fk.getFkTableName());
 
@@ -97,11 +123,11 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected void loadCheckConstraints(DefaultRelations r) {
-        getModel().selectTables(getInputSchemata()).forEach(t -> loadTableCheckConstraints(r, t));
+        getModel().selectTables(getInputSchemata(), getDefaultSchema()).forEach(t -> loadTableCheckConstraints(r, t));
     }
 
     private void loadTableCheckConstraints(DefaultRelations r, TableModel table) {
-        SchemaDefinition schema = getSchema(table.getSchemaString());
+        SchemaDefinition schema = getTableSchema(table);
         TableDefinition tableDef = getTable(schema, table.getName());
 
         table.getTableChecks().forEach(tc -> {
@@ -119,7 +145,7 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected List<SchemaDefinition> getSchemata0() {
-        Set<String> schemaNames = getModel().getSchemaNames();
+        Set<String> schemaNames = getModel().getSchemaNames(getDefaultSchema());
         return schemaNames.stream()
                 .map(name -> new SchemaDefinition(this, name, null))
                 .collect(Collectors.toList());
@@ -127,10 +153,9 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected List<SequenceDefinition> getSequences0() {
-        return getModel().selectSequences(getInputSchemata())
+        return getModel().selectSequences(getInputSchemata(), getDefaultSchema())
                 .map(sequence -> {
-                    String schemaName = sequence.getSchemaString();
-                    SchemaDefinition schema = getSchema(schemaName);
+                    SchemaDefinition schema = getSequenceSchema(sequence);
                     DefaultDataTypeDefinition typeDef = new DefaultDataTypeDefinition(this, schema, "BIGINT");
                     return new DefaultSequenceDefinition(schema, sequence.getName(), typeDef);
                 })
@@ -142,15 +167,13 @@ public class VertabeloDbDefinition extends AbstractDatabase {
         List<TableDefinition> result = new ArrayList<>();
         List<String> inputSchemata = getInputSchemata();
 
-        getModel().selectTables(inputSchemata).forEach(table -> {
-            String schemaName = table.getSchemaString();
-            SchemaDefinition schema = getSchema(schemaName);
+        getModel().selectTables(inputSchemata, getDefaultSchema()).forEach(table -> {
+            SchemaDefinition schema = getTableSchema(table);
             result.add(new VertabeloTableDefinition(schema, table));
         });
 
-        getModel().selectViews(inputSchemata).forEach(view -> {
-            String schemaName = view.getSchemaString();
-            SchemaDefinition schema = getSchema(schemaName);
+        getModel().selectViews(inputSchemata, getDefaultSchema()).forEach(view -> {
+            SchemaDefinition schema = getViewSchema(view);
             result.add(new VertabeloViewDefinition(schema, view));
         });
 
@@ -159,7 +182,7 @@ public class VertabeloDbDefinition extends AbstractDatabase {
 
     @Override
     protected List<CatalogDefinition> getCatalogs0() {
-        return emptyList();
+        return singletonList(new CatalogDefinition(this, "", ""));
     }
 
     @Override

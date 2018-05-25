@@ -35,8 +35,8 @@ public class ReferenceModel {
     }
 
     boolean isReferenceInSchema(String defaultSchema, Collection<String> allowedSchemas) {
-        String pkSchemaName = getPKTable().getSchema().orElse(defaultSchema);
-        String fkSchemaName = getFKTable().getSchema().orElse(defaultSchema);
+        String pkSchemaName = getPKTable().getSchema(defaultSchema);
+        String fkSchemaName = getFKTable().getSchema(defaultSchema);
         return allowedSchemas.containsAll(Arrays.asList(pkSchemaName, fkSchemaName));
     }
 

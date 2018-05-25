@@ -51,7 +51,7 @@ class DbModelForeignKeysTest {
     @DisplayName("returns empty foreign keys list when no references available")
     void shouldReturnEmptyWhenNoReferencesAvailable() {
         // when
-        Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA);
+        Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA, DEFAULT_SCHEMA);
 
         // then
         assertThat(foreignKeys).isEmpty();
@@ -126,7 +126,7 @@ class DbModelForeignKeysTest {
             addTableAK(pkTable, "ak1", asList("col2", "col3"));
 
             // when
-            Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA);
+            Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA, DEFAULT_SCHEMA);
 
             // then
             assertThat(foreignKeys).isEmpty();
@@ -142,7 +142,7 @@ class DbModelForeignKeysTest {
             addReferenceColumns("col1", "coln");
 
             // when
-            Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA);
+            Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA, DEFAULT_SCHEMA);
 
             // then
             assertThat(foreignKeys).isEmpty();
@@ -166,7 +166,7 @@ class DbModelForeignKeysTest {
                 addTablePKColumn(pkTable, "SomeOtherCol");
 
                 // when
-                Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA);
+                Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA, DEFAULT_SCHEMA);
 
                 // then
                 assertThat(foreignKeys).isEmpty();
@@ -181,7 +181,7 @@ class DbModelForeignKeysTest {
                 addTableAK(pkTable, "table_ak", singletonList("RefCol2"));
 
                 // when
-                Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA);
+                Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA, DEFAULT_SCHEMA);
 
                 // then
                 assertThat(foreignKeys).isEmpty();
@@ -198,7 +198,7 @@ class DbModelForeignKeysTest {
                 addTableAK(pkTable, "table_ak", asList("RefCol1", "RefCol2"));
 
                 // when
-                Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA);
+                Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA, DEFAULT_SCHEMA);
 
                 // then
                 assertThat(foreignKeys).hasSize(1);
@@ -221,7 +221,7 @@ class DbModelForeignKeysTest {
                 reference.withName("reference_name");
 
                 // when
-                Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA);
+                Set<ForeignKeyModel> foreignKeys = dbModel.getForeignKeys(INPUT_SCHEMA, DEFAULT_SCHEMA);
 
                 // then
                 assertThat(foreignKeys).hasSize(1);

@@ -45,68 +45,64 @@ public class DbModel {
         return DbEngineConverter.asSQLDialect(dbEngine);
     }
 
-    public Set<String> getSchemaNames() {
+    public Set<String> getSchemaNames(String defaultSchema) {
         HashSet<String> result = tables()
-                .map(TableModel::getSchema)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(t -> t.getSchema(defaultSchema))
                 .collect(Collectors.toCollection(HashSet::new));
 
         Set<String> viewSchemas = views()
-                .map(ViewModel::getSchema)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(v -> v.getSchema(defaultSchema))
                 .collect(Collectors.toSet());
         result.addAll(viewSchemas);
 
         return result;
     }
 
-    public Stream<TableModel> selectTables(List<String> inputSchemas) {
+    public Stream<TableModel> selectTables(List<String> inputSchemas, String defaultSchema) {
         HashSet<String> schemasSet = new HashSet<>(inputSchemas);
         return tables()
                 .filter(table -> {
-                    String tableSchema = table.getSchemaString();
+                    String tableSchema = table.getSchema(defaultSchema);
                     return schemasSet.contains(tableSchema);
                 });
     }
 
-    public Stream<ViewModel> selectViews(List<String> inputSchemas) {
+    public Stream<ViewModel> selectViews(List<String> inputSchemas, String defaultSchema) {
         HashSet<String> schemasSet = new HashSet<>(inputSchemas);
         return views()
                 .filter(view -> {
-                    String viewSchema = view.getSchemaString();
+                    String viewSchema = view.getSchema(defaultSchema);
                     return schemasSet.contains(viewSchema);
                 });
     }
 
-    public Stream<SequenceModel> selectSequences(List<String> inputSchemas) {
+    public Stream<SequenceModel> selectSequences(List<String> inputSchemas, String defaultSchema) {
         HashSet<String> schemasSet = new HashSet<>(inputSchemas);
         return sequences()
                 .filter(sequence -> {
-                    String sequenceSchema = sequence.getSchemaString();
+                    String sequenceSchema = sequence.getSchema(defaultSchema);
                     return schemasSet.contains(sequenceSchema);
                 });
     }
 
-    public Set<ForeignKeyModel> getForeignKeys(List<String> inputSchemas) {
+    public Set<ForeignKeyModel> getForeignKeys(List<String> inputSchemas, String defaultSchema) {
         return references()
-                .filter(reference -> reference.isReferenceInSchema("", inputSchemas))
-                .map(this::buildFKFromReference)
+                .filter(reference -> reference.isReferenceInSchema(defaultSchema, inputSchemas))
+                .map(reference -> buildFKFromReference(reference, defaultSchema))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
     }
 
-    private Optional<ForeignKeyModel> buildFKFromReference(ReferenceModel referenceModel) {
+    private Optional<ForeignKeyModel> buildFKFromReference(ReferenceModel referenceModel, String defaultSchema) {
         return referenceModel.getUniqueKeyName()
-                .map(uniqueKeyName -> buildFKFromReferenceAndUK(uniqueKeyName, referenceModel));
+                .map(uniqueKeyName -> buildFKFromReferenceAndUK(uniqueKeyName, referenceModel, defaultSchema));
     }
 
-    private ForeignKeyModel buildFKFromReferenceAndUK(String uk, ReferenceModel referenceModel) {
+    private ForeignKeyModel buildFKFromReferenceAndUK(String uk, ReferenceModel referenceModel, String defaultSchema) {
         return ForeignKeyModel.builder()
                 .uniqueKeyName(uk)
-                .uniqueKeySchemaName(referenceModel.getPKTable().getSchemaString())
+                .uniqueKeySchemaName(referenceModel.getPKTable().getSchema(defaultSchema))
                 .foreignKeyName(referenceModel.getName())
                 .fkTable(referenceModel.getFKTable())
                 .fkTableReferenceColumns(referenceModel.getFKTableReferenceColumns())
