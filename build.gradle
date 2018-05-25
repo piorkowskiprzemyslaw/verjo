@@ -17,17 +17,27 @@ buildscript {
 
     dependencies {
         classpath "org.unbroken-dome.gradle-plugins:gradle-xjc-plugin:1.1.3"
+        classpath "pl.allegro.tech.build:axion-release-plugin:1.9.0"
     }
 }
 
 apply plugin: "java"
 apply plugin: "maven-publish"
 apply plugin: "org.unbroken-dome.xjc"
+apply plugin: "pl.allegro.tech.build.axion-release"
 
 repositories repoConfig
 
+scmVersion {
+    hooks {
+        pre 'commit'
+    }
+
+    localOnly = true
+}
+
 group "pl.ppiorkowski"
-version "0.0.1-SNAPSHOT"
+version scmVersion.version
 sourceCompatibility = 1.8
 
 dependencies {
