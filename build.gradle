@@ -10,7 +10,6 @@ buildscript {
 
         jooqVersion = "3.10.4"
         junitVersion = "5.2.0"
-        jacksonVersion = "2.9.5"
     }
 
     repositories repoConfig
@@ -25,6 +24,7 @@ apply plugin: "java"
 apply plugin: "maven-publish"
 apply plugin: "org.unbroken-dome.xjc"
 apply plugin: "pl.allegro.tech.build.axion-release"
+apply plugin: "jacoco"
 
 repositories repoConfig
 

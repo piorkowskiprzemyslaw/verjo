@@ -1,7 +1,5 @@
-VerJo
+VerJo [![Build Status](https://travis-ci.org/piorkowskiprzemyslaw/verjo.svg?branch=master)](https://travis-ci.org/piorkowskiprzemyslaw/verjo)[![codecov](https://codecov.io/gh/piorkowskiprzemyslaw/verjo/branch/master/graph/badge.svg)](https://codecov.io/gh/piorkowskiprzemyslaw/verjo)
 ==
-
-[![Build Status](https://travis-ci.org/piorkowskiprzemyslaw/verjo.svg?branch=master)](https://travis-ci.org/piorkowskiprzemyslaw/verjo)
 
 VerJo is an jOOQ plugin providing code generation from Vertabelo XML files.
 
