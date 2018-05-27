@@ -1,19 +1,17 @@
-VerJo [![Build Status](https://travis-ci.org/piorkowskiprzemyslaw/verjo.svg?branch=master)](https://travis-ci.org/piorkowskiprzemyslaw/verjo)[![codecov](https://codecov.io/gh/piorkowskiprzemyslaw/verjo/branch/master/graph/badge.svg)](https://codecov.io/gh/piorkowskiprzemyslaw/verjo)
-==
+## VerJo [![Build Status](https://travis-ci.org/piorkowskiprzemyslaw/verjo.svg?branch=master)](https://travis-ci.org/piorkowskiprzemyslaw/verjo)[![codecov](https://codecov.io/gh/piorkowskiprzemyslaw/verjo/branch/master/graph/badge.svg)](https://codecov.io/gh/piorkowskiprzemyslaw/verjo)
 
 VerJo is an jOOQ plugin providing code generation from Vertabelo XML files.
 
-Getting started
---
-[Vertabelo](https://www.vertabelo.com) is a great tool for creating and sharing online ERD models, [jOOQ](https://www.jooq.org) is an orm framework well supported by Spring framework. VerJo supports jOOQ codegen version greater than 3.10.4 and Vertabelo xsd v2.3. It's inspired by old [vertabelo-jooq](https://github.com/Vertabelo/vertabelo-jooq) plugin which worked well for jOOQ 3.7.x. 
+## Getting started
+
+[Vertabelo](https://www.vertabelo.com) is a great tool for creating and sharing online ERD models, [jOOQ](https://www.jooq.org) is an orm framework well supported by Spring framework. VerJo supports jOOQ codegen version greater than 3.10.x and Vertabelo schema v2.3. It's inspired by old [vertabelo-jooq](https://github.com/Vertabelo/vertabelo-jooq) plugin which worked well for jOOQ 3.7.x. 
 
 Right now VerJo is not available in any public artifact repository. You can install it locally by with the following command
 ```bash
 ./gradlew publishToMavenLocal
 ```
 
-Basic use
---
+## Basic use
 VerJo provides VertabeloXML aware Database implementation. Below [gradle-jooq-plugin](https://github.com/etiennestuder/gradle-jooq-plugin) configuration will generate sources for your model
 ```groovy
 plugins {
@@ -22,7 +20,7 @@ plugins {
 
 dependencies {
     compile 'org.jooq:jooq'
-    jooqRuntime 'pl.ppiorkowski:verjo:0.1.0-SNAPSHOT'
+    jooqRuntime 'pl.ppiorkowski:verjo:0.1.0'
 }
 
 jooq {
@@ -49,11 +47,13 @@ jooq {
 }
 ```
 
-Properties
---
-At the moment VerJo accepts two properties keys
+## Properties
+VerJo is configurable with listed below properties
 
-property name | obligatory? | description
+property name | obligatory | description
 :---: | :---: | :---:
-`vertabelo-xml-file` | true | path to vertabelo xml file
-`vertabelo-default-schema` | false | name of default schema which should be generated. Default value is `""`.
+`vertabelo-xml-file` | yes | path to vertabelo xml file
+`vertabelo-default-schema` | no | name of default schema which should be generated. Default value is `""`.
+
+## License
+**verjo** is published under MIT license.

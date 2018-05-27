@@ -30,13 +30,12 @@ repositories repoConfig
 
 scmVersion {
     hooks {
+        pre 'fileUpdate', [file: 'README.md', pattern: {v, c -> /verjo:$v/}, replacement: {v, c -> "verjo:$v"}]
         pre 'commit'
     }
-
-    localOnly = true
 }
 
-group "pl.ppiorkowski"
+group "com.github.piorkowskiprzemyslaw"
 version scmVersion.version
 sourceCompatibility = 1.8
 
@@ -101,7 +100,7 @@ xjcGenerate {
     source = fileTree('src/main/resources/schema/2_3') { include 'schema.xsd' }
     bindingFiles = fileTree('src/main/resources/schema/2_3/bindings') { include 'binding.xjb' }
     outputDirectory = file("gen/java")
-    targetPackage = "pl.ppiorkowski.verjo.xsd"
+    targetPackage = "com.github.piorkowskiprzemyslaw.verjo.xsd"
     extraArgs = ['-Xannotate',
                  '-Xfluent-api',
                  '-XtoString',
