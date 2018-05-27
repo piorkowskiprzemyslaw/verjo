@@ -20,7 +20,7 @@ plugins {
 
 dependencies {
     compile 'org.jooq:jooq'
-    jooqRuntime 'pl.ppiorkowski:verjo:0.1.0'
+    jooqRuntime 'com.github.piorkowskiprzemyslaw:verjo:0.1.0'
 }
 
 jooq {
@@ -29,7 +29,7 @@ jooq {
     sample(sourceSets.main) {
         generator {
             database {
-                name = 'pl.ppiorkowski.verjo.VertabeloDbDefinition'
+                name = 'com.github.piorkowskiprzemyslaw.verjo.VertabeloDbDefinition'
                 properties {
                     property {
                         key = "vertabelo-xml-file"
