@@ -16,22 +16,24 @@ buildscript {
 
     dependencies {
         classpath "org.unbroken-dome.gradle-plugins:gradle-xjc-plugin:1.1.3"
-        classpath "pl.allegro.tech.build:axion-release-plugin:1.9.0"
+        classpath "pl.allegro.tech.build:axion-release-plugin:1.9.1"
+        classpath "com.bmuschko:gradle-nexus-plugin:2.3.1"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
     }
 }
 
 apply plugin: "java"
-apply plugin: "maven-publish"
 apply plugin: "org.unbroken-dome.xjc"
 apply plugin: "pl.allegro.tech.build.axion-release"
 apply plugin: "jacoco"
+apply plugin: "com.bmuschko.nexus"
+apply plugin: "io.codearte.nexus-staging"
 
 repositories repoConfig
 
 scmVersion {
     hooks {
         pre 'fileUpdate', [file: 'README.md', pattern: {v, c -> /verjo:$v/}, replacement: {v, c -> "verjo:$v"}]
-        pre 'commit'
     }
 }
 
@@ -79,23 +81,6 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-        }
-    }
-}
-
 xjcGenerate {
     source = fileTree('src/main/resources/schema/2_3') { include 'schema.xsd' }
     bindingFiles = fileTree('src/main/resources/schema/2_3/bindings') { include 'binding.xjb' }
@@ -110,4 +95,47 @@ xjcGenerate {
 
 clean {
     delete "gen"
+}
+
+modifyPom {
+    project {
+        name 'VerJo'
+        description 'VerJo is an jOOQ plugin providing code generation from Vertabelo XML files.'
+        url 'https://github.com/piorkowskiprzemyslaw/verjo'
+        inceptionYear '2018'
+
+        scm {
+            url 'https://github.com/piorkowskiprzemyslaw/verjo'
+            connection 'scm:https://github.com/piorkowskiprzemyslaw/verjo.git'
+            developerConnection 'scm:git@github.com:piorkowskiprzemyslaw/verjo.git'
+        }
+
+        licenses {
+            license {
+                name 'MIT License'
+                url 'https://raw.githubusercontent.com/piorkowskiprzemyslaw/verjo/master/LICENSE'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'piorkowskiprzemyslaw'
+                name 'Przemysław Piórkowski'
+                email 'piorkowskiprzemyslaw@gmail.com'
+            }
+        }
+    }
+}
+
+extraArchive {
+    sources = true
+    tests = true
+    javadoc = false
+}
+
+nexus {
+    sign = true
+    repositoryUrl = 'http://localhost:8081/nexus/content/repositories/internal/'
+    snapshotRepositoryUrl = 'http://localhost:8081/nexus/content/repositories/internal-snapshots/'
 }
