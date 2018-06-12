@@ -47,7 +47,7 @@ class DbEngineConverterTest {
                 Arguments.of("ibm_db2", "9.7", DEFAULT),
                 Arguments.of("mysql", "5.x", MYSQL),
                 Arguments.of("oracle", "11g/12c", DEFAULT),
-                Arguments.of("postgresql", "9.x", POSTGRES_9_3),
+                Arguments.of("postgresql", "9.x", POSTGRES),
                 Arguments.of("sqlite", "3.x", SQLITE),
                 Arguments.of("sql_server", "2012/2014/2016", DEFAULT)
         );

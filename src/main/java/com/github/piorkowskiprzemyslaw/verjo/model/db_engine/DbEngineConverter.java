@@ -22,7 +22,7 @@ public final class DbEngineConverter {
         supportedEngines.put(engineFrom("ibm_db2", "9.7"), DEFAULT);
         supportedEngines.put(engineFrom("mysql", "5.x"), MYSQL);
         supportedEngines.put(engineFrom("oracle", "11g/12c"), DEFAULT);
-        supportedEngines.put(engineFrom("postgresql", "9.x"), POSTGRES_9_3);
+        supportedEngines.put(engineFrom("postgresql", "9.x"), POSTGRES);
         supportedEngines.put(engineFrom("sqlite", "3.x"), SQLITE);
         supportedEngines.put(engineFrom("sql_server", "2012/2014/2016"), DEFAULT);
     }
