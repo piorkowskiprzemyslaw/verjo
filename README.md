@@ -4,7 +4,7 @@ VerJo is an jOOQ plugin providing code generation from Vertabelo XML files.
 
 ## Getting started
 
-[Vertabelo](https://www.vertabelo.com) is a great tool for creating and sharing online ERD models, [jOOQ](https://www.jooq.org) is an orm framework well supported by Spring framework. VerJo supports jOOQ codegen version greater than 3.10.x and Vertabelo schema v2.3. It's inspired by old [vertabelo-jooq](https://github.com/Vertabelo/vertabelo-jooq) plugin which worked well for jOOQ 3.7.x.
+[Vertabelo](https://www.vertabelo.com) is a great tool for creating and sharing online ERD models, [jOOQ](https://www.jooq.org) is an orm framework well supported by Spring. VerJo supports jOOQ codegen version greater than 3.10.x and Vertabelo schema v2.3. It's inspired by old [vertabelo-jooq](https://github.com/Vertabelo/vertabelo-jooq) plugin which worked well for jOOQ 3.7.x.
 
 ## Basic use
 VerJo provides VertabeloXML aware Database implementation. Below [gradle-jooq-plugin](https://github.com/etiennestuder/gradle-jooq-plugin) configuration will generate sources for your model
@@ -52,7 +52,10 @@ VerJo is configurable with listed below properties
 property name | obligatory | description
 :---: | :---: | :---:
 `vertabelo-xml-file` | yes | path to vertabelo xml file
-`vertabelo-default-schema` | no | name of default schema which should be generated. Default value is `""`.
+`vertabelo-default-schema` | no | name of default schema which should be generated. Default value is empty string `""`.
+
+## Demo
+Working VerJo sample configuration can be found [here](https://github.com/piorkowskiprzemyslaw/verjo-test).
 
 ## License
 **verjo** is published under MIT license.
