@@ -19,7 +19,7 @@ plugins {
 
 dependencies {
     compile 'org.jooq:jooq'
-    jooqRuntime 'com.github.piorkowskiprzemyslaw:verjo:0.1.3'
+    jooqRuntime 'com.github.piorkowskiprzemyslaw:verjo:0.1.4'
 }
 
 jooq {
