@@ -35,8 +35,8 @@ scmVersion {
 
 group "com.github.piorkowskiprzemyslaw"
 version scmVersion.version
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 dependencies {
     compile "org.jooq:jooq-codegen:$jooqVersion"
