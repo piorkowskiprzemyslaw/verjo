@@ -9,7 +9,7 @@ import com.github.piorkowskiprzemyslaw.verjo.model.table.PrimaryKeyModel;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.jooq.util.*;
+import org.jooq.meta.*;
 
 import java.util.ArrayList;
 import java.util.List;

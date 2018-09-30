@@ -2,7 +2,7 @@ package com.github.piorkowskiprzemyslaw.verjo;
 
 import com.github.piorkowskiprzemyslaw.verjo.model.TableModel;
 import com.github.piorkowskiprzemyslaw.verjo.xsd.Column;
-import org.jooq.util.*;
+import org.jooq.meta.*;
 
 import java.util.ArrayList;
 import java.util.List;
