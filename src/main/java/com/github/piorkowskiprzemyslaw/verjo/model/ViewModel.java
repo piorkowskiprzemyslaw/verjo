@@ -13,7 +13,7 @@ public class ViewModel extends ModelWithProperties {
 
     private static final String SCHEMA_PROPERTY_NAME = "schema";
 
-    private final View view;
+    View view;
 
     public String getSchema(String defaultSchema) {
         return getPropertyValue(SCHEMA_PROPERTY_NAME, view.getProperties())

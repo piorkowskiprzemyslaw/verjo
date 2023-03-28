@@ -8,8 +8,8 @@ import lombok.Value;
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ColumnCheckModel {
-    private String name;
-    private String checkExpression;
+    String name;
+    String checkExpression;
 
     public ColumnCheckModel(String tableName, Column column) {
         name = String.format("%s_%s_check", tableName, column.getName());

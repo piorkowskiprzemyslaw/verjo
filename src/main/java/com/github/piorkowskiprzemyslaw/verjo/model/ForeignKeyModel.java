@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 @Value
 @Builder
 public class ForeignKeyModel {
-    private String uniqueKeySchemaName;
-    private String uniqueKeyName;
-    private TableModel fkTable;
-    private List<Column> fkTableReferenceColumns;
-    private String foreignKeyName;
+    String uniqueKeySchemaName;
+    String uniqueKeyName;
+    TableModel fkTable;
+    List<Column> fkTableReferenceColumns;
+    String foreignKeyName;
 
     public String getFkTableName() {
         return getFkTable().getName();

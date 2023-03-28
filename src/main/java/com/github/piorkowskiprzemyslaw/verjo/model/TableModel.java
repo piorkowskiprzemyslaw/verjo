@@ -22,7 +22,7 @@ public class TableModel extends ModelWithProperties {
     private static final JooqLogger log = JooqLogger.getLogger(TableModel.class);
     private static final String SCHEMA_PROPERTY_NAME = "schema";
 
-    private final Table table;
+    Table table;
 
     public String getSchema(String defaultSchema) {
         return getPropertyValue(SCHEMA_PROPERTY_NAME, table.getProperties())

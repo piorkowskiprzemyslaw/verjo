@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 @Value
 @Builder
 public class AlternateKeyModel {
-    private String name;
+    String name;
     @Singular
-    private List<Column> columns;
+    List<Column> columns;
 
     public List<String> getColumnNames() {
         return getColumns().stream()
